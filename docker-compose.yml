@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  ids:
+    image: byappt/ids:1.0.1
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    volumes:
+      - type: bind
+        source: ./keymaterial.pfx
+        target: /app/keymaterial.pfx
+        read_only: true
+      - type: bind
+        source: ./appsettings.json
+        target: /app/appsettings.json
+        read_only: true
+    ports:
+      - "5000:80"
