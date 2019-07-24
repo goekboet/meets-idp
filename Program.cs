@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
 
@@ -28,6 +29,7 @@ namespace gateway
                     .UseSerilog((context, configuration) =>
                     {
                         configuration
+                            //.WriteTo.Console(formatter: new CompactJsonFormatter())
                             .ReadFrom.Configuration(context.Configuration);
                     });
         }

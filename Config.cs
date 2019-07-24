@@ -1,6 +1,10 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+// dev    7yYOmqPGc68kDReiZgSANhqOCB0f/soqXtDjIZ/BhWc=
+// trial  eYkemAdH/70h5pApc5Tv52T6Vtfjd1D4AIefuy00Vxo=
+// proper hKyHSyMqAZ4Jkd2uUOtVd3+4NvmND+jv2ncuWSsqktk=
+// meets  TZyfD1CybAcT1+jyyTw5VsRFXo7cM5R7gI45CowrrwQ=
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
@@ -41,6 +45,13 @@ namespace gateway
                             Name = "call", 
                             DisplayName = "Call",
                             Description = "Participate in meetings" 
+                        },
+                        new Scope
+                        {
+                            Name = "schedule",
+                            DisplayName = "Schedule Appointments",
+                            Description = "Make meets availiable and unavailiable.",
+                            UserClaims = new [] { "principal" }
                         }
                     }
                 }
@@ -65,11 +76,11 @@ namespace gateway
                 },
                 new Client
                 {
-                    ClientId = "hosted_principals",
+                    ClientId = "trials",
                     ClientName = "Principals without an own domain.",
 
                     AllowedGrantTypes = GrantTypes.Code,
-                    ClientSecrets = { new Secret("hosted".Sha256()) },
+                    ClientSecrets = { new Secret("trials".Sha256()) },
 
                     RedirectUris = { "http://localhost:5020/signin-oidc" },
                     FrontChannelLogoutUri = "http://localhost:5020/signout-oidc",

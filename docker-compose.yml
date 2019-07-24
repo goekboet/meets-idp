@@ -3,12 +3,8 @@ services:
   ids:
     image: byappt/ids:1.0.1
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - type: bind
-        source: ./keymaterial.pfx
-        target: /app/keymaterial.pfx
-        read_only: true
       - type: bind
         source: ./appsettings.json
         target: /app/appsettings.json

@@ -36,15 +36,17 @@ namespace gateway
 
             var builder = services.AddIdentityServer(options =>
             {
+                Configuration.GetSection("IdentityServerOptions").Bind(options);
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+                //options.Discovery = new IdentityServer4.Configuration.DiscoveryOptions
             })
                 .AddTestUsers(TestUsers.Users)
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Config.GetClients());
+                .AddInMemoryClients(Configuration.GetSection("clients"));
 
             services.AddAuthentication()
                 .AddOpenIdConnect("proper", opts =>
