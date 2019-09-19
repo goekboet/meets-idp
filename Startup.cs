@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace gateway
 {
@@ -26,6 +27,17 @@ namespace gateway
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto;
+                
+                // Per default kestrel only forwards proxy-headers from localhost. You need to add
+                // ip-numbers into these lists or empty them to forward all.
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+            
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
             services.Configure<IISOptions>(options =>
@@ -72,6 +84,8 @@ namespace gateway
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseForwardedHeaders();
+            
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
