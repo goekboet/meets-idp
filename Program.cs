@@ -4,17 +4,34 @@
 
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
-using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Formatting.Elasticsearch;
 using System;
 
 namespace gateway
 {
     public class Program
     {
+        public static LoggerConfiguration SwitchLogger(
+            string key, 
+            LoggerConfiguration logger)
+        {
+            switch (key)
+            {
+                case "Console":
+                    logger.WriteTo.Console();
+                    break;
+                case "StdOutJson":
+                    logger.WriteTo.Console(new ElasticsearchJsonFormatter());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException($"key: {key}");
+            }
+
+            return logger;
+        }
+
         public static void Main(string[] args)
         {
             Console.Title = "meets.idgateway";
@@ -28,9 +45,9 @@ namespace gateway
                     .UseStartup<Startup>()
                     .UseSerilog((context, configuration) =>
                     {
-                        configuration
-                            //.WriteTo.Console(formatter: new CompactJsonFormatter())
-                            .ReadFrom.Configuration(context.Configuration);
+                        IdentityModelEventSource.ShowPII = true;
+                        var key = context.Configuration["Serilog:Configuration"];
+                        SwitchLogger(key, configuration);
                     });
         }
     }
