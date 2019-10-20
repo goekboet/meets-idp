@@ -2,12 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using System;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Formatting.Elasticsearch;
-using System;
 
 namespace gateway
 {
@@ -36,19 +36,21 @@ namespace gateway
         {
             Console.Title = "meets.idgateway";
 
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
         {
-            return WebHost.CreateDefaultBuilder(args)
-                    .UseStartup<Startup>()
-                    .UseSerilog((context, configuration) =>
+            webBuilder
+                .UseStartup<Startup>()
+                .UseSerilog((context, configuration) =>
                     {
                         IdentityModelEventSource.ShowPII = true;
                         var key = context.Configuration["Serilog:Configuration"];
                         SwitchLogger(key, configuration);
                     });
-        }
+        });
     }
 }

@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,21 +9,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 namespace gateway
 {
     public class Startup
     {
-        public IHostingEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Env {get;}
 
-        public Startup(IHostingEnvironment environment, IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment env)
         {
-            Environment = environment;
             Configuration = configuration;
+            Env = env;
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(
+            IServiceCollection services)
         {
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -37,15 +40,21 @@ namespace gateway
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
             });
-            
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
-            services.Configure<IISOptions>(options =>
+            if (Configuration["Dataprotection:Type"] == "Docker")
             {
-                options.AutomaticAuthentication = false;
-                options.AuthenticationDisplayName = "Windows";
-            });
-
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(
+                        new DirectoryInfo(Configuration["Dataprotection:KeyPath"])
+                    )
+                    .ProtectKeysWithCertificate(
+                        new X509Certificate2(
+                            Configuration["Dataprotection:CertPath"],
+                            Configuration["Dataprotection:CertPass"]
+                        )
+                    );
+            }
+            
             var builder = services.AddIdentityServer(options =>
             {
                 Configuration.GetSection("IdentityServerOptions").Bind(options);
@@ -59,6 +68,8 @@ namespace gateway
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryClients(Configuration.GetSection("clients"));
+            
+            services.AddControllersWithViews();
 
             services.AddAuthentication()
                 .AddOpenIdConnect("proper", opts =>
@@ -66,7 +77,7 @@ namespace gateway
                     Configuration.GetSection("Proper").Bind(opts);
                 });
 
-            if (Environment.IsDevelopment())
+            if (Env.EnvironmentName == "Development")
             {
                 builder.AddDeveloperSigningCredential();
             }
@@ -82,18 +93,26 @@ namespace gateway
             }
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(
+            IApplicationBuilder app)
         {
             app.UseForwardedHeaders();
             
-            if (Environment.IsDevelopment())
+            if (Env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseIdentityServer();
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+
+            app.UseIdentityServer();
+
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+               endpoints.MapDefaultControllerRoute();
+            });
         }
     }
 }
