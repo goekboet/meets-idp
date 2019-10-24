@@ -11,6 +11,8 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.DataProtection;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace gateway
 {
@@ -54,20 +56,41 @@ namespace gateway
                         )
                     );
             }
-            
+
+            services.AddDbContext<UsersDb>(options =>
+                options.UseNpgsql(
+                            Configuration.GetConnectionString("Users"),
+                            b => b.MigrationsAssembly("gateway")));
+
+            services.AddIdentity<IdsUser, IdentityRole>()
+                .AddEntityFrameworkStores<UsersDb>()
+                .AddDefaultTokenProviders();
+
             var builder = services.AddIdentityServer(options =>
             {
                 Configuration.GetSection("IdentityServerOptions").Bind(options);
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
+                // options.Events.RaiseErrorEvents = true;
+                // options.Events.RaiseInformationEvents = true;
+                // options.Events.RaiseFailureEvents = true;
+                // options.Events.RaiseSuccessEvents = true;
                 //options.Discovery = new IdentityServer4.Configuration.DiscoveryOptions
             })
-                .AddTestUsers(TestUsers.Users)
+                .AddAspNetIdentity<IdsUser>()
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Configuration.GetSection("clients"));
+                .AddInMemoryClients(Configuration.GetSection("clients"))
+                .AddOperationalStore(options => {
+                    options.ConfigureDbContext = builder => 
+                    {
+                        builder.UseNpgsql(
+                            Configuration.GetConnectionString("Grants"),
+                            b => b.MigrationsAssembly("gateway"));
+
+                    };
+                    options.EnableTokenCleanup = true;
+                });
+
+            
             
             services.AddControllersWithViews();
 

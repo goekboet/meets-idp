@@ -19,13 +19,6 @@ namespace gateway
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResource
-                {
-                    Name = "principal",
-                    DisplayName = "Principal",
-                    Description = "Representing a principal.",
-                    UserClaims = new [] { "name", "principal" }
-                }
             };
         }
 
