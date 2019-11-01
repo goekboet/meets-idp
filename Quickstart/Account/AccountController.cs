@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,12 +25,17 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
+        public const string LoginIntent = "login";
+        public const string RegisterIntent = "register";
+        public const string CancelIntent = "cancel";
+
         private readonly UserManager<IdsUser> _userManager;
         private readonly SignInManager<IdsUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<IdsUser> userManager,
@@ -37,7 +43,8 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IEventService events,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,6 +52,67 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public IActionResult Register(string returnUrl = "~/")
+        {
+            return View(new RegisterInput { ReturnUrl = returnUrl });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(
+            RegisterInput input,
+            string button)
+        {
+            if (button == CancelIntent)
+            {
+                return await Login(
+                    new LoginInputModel 
+                    { 
+                        ReturnUrl = input.ReturnUrl
+                    }
+                    , button);
+            }
+
+            if (ModelState.IsValid)
+            {
+                var registration = await _userManager.CreateAsync(
+                new IdsUser
+                {
+                    UserName = input.Username
+                },
+                input.Password);
+
+                if (registration.Succeeded)
+                {
+                    return await Login(
+                        new LoginInputModel
+                        { 
+                            RememberLogin = false, 
+                            ReturnUrl = input.ReturnUrl, 
+                            Username = input.Username,
+                            Password = input.Password
+                        }, 
+                        LoginIntent);
+                }
+                else
+                {
+                    foreach (var e in registration.Errors)
+                    {
+                        ModelState.AddModelError(e.Code, e.Description);
+                    }
+
+                    return View("Register", input);
+                }
+
+            }
+            else
+            {
+                return View("Register", input);
+            }
         }
 
         /// <summary>
@@ -70,13 +138,15 @@ namespace IdentityServer4.Quickstart.UI
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginInputModel model, string button)
+        public async Task<IActionResult> Login(
+            LoginInputModel model,
+            string button)
         {
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             // the user clicked the "cancel" button
-            if (button != "login")
+            if (button != LoginIntent)
             {
                 if (context != null)
                 {
@@ -139,7 +209,7 @@ namespace IdentityServer4.Quickstart.UI
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -148,7 +218,7 @@ namespace IdentityServer4.Quickstart.UI
             return View(vm);
         }
 
-        
+
         /// <summary>
         /// Show logout page
         /// </summary>

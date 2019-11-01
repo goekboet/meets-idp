@@ -42,6 +42,7 @@
                                 <div class="form-group">
                                     <button class="btn btn-primary" name="button" value="login">Login</button>
                                     <button class="btn btn-default" name="button" value="cancel">Cancel</button>
+                                    @Html.ActionLink("Register", "Register", "Account", new { returnUrl = Model.ReturnUrl }, new { @class = "btn btn-primary pull-right"})
                                 </div>
                             </fieldset>
                         </form>
