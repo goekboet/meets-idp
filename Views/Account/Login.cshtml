@@ -17,13 +17,13 @@
                         <h3 class="panel-title">Local Login</h3>
                     </div>
                     <div class="panel-body">
-
+                        <p><a asp-controller="Account" asp-action="Register" asp-route-returnUrl=@Model.ReturnUrl>Register</a> an account if you havent already.</p>
                         <form asp-route="Login">
                             <input type="hidden" asp-for="ReturnUrl" />
 
                             <fieldset>
                                 <div class="form-group">
-                                    <label asp-for="Username"></label>
+                                    <label asp-for="Username" class="control-label"></label>
                                     <input class="form-control" placeholder="Username" asp-for="Username" autofocus>
                                 </div>
                                 <div class="form-group">
@@ -42,7 +42,6 @@
                                 <div class="form-group">
                                     <button class="btn btn-primary" name="button" value="login">Login</button>
                                     <button class="btn btn-default" name="button" value="cancel">Cancel</button>
-                                    @Html.ActionLink("Register", "Register", "Account", new { returnUrl = Model.ReturnUrl }, new { @class = "btn btn-primary pull-right"})
                                 </div>
                             </fieldset>
                         </form>

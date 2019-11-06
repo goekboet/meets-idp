@@ -1,4 +1,6 @@
 ﻿@using IdentityServer4.Extensions
+@using Microsoft.Extensions.Primitives
+
 @{
     string name = null;
     if (!true.Equals(ViewData["signed-out"]))
@@ -6,6 +8,26 @@
         name = Context.User?.GetDisplayName();
     }
 }
+
+@functions
+{
+    string forwardQueryState()
+    {
+        var state = Context.Request.Query
+            .SingleOrDefault(x => x.Key == "returnUrl");
+
+        if (state.Equals(default(KeyValuePair<string, StringValues>)))
+        {
+            return Context.Request.Path.ToString();
+        }
+        else
+        {
+            return state.Value.First();
+        }
+    } 
+}
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,6 +65,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">@name <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a asp-action="Logout" asp-controller="Account">Logout</a></li>
+                            <li><a asp-action="Index" asp-controller="Profile" asp-route-returnUrl=@forwardQueryState()>Profile</a></li>
                         </ul>
                     </li>
                 </ul>

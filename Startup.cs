@@ -62,7 +62,11 @@ namespace gateway
                             Configuration.GetConnectionString("Users"),
                             b => b.MigrationsAssembly("gateway")));
 
-            services.AddIdentity<IdsUser, IdentityRole>()
+            services.AddIdentity<IdsUser, IdentityRole>(options => 
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireNonAlphanumeric = false;    
+                })
                 .AddEntityFrameworkStores<UsersDb>()
                 .AddDefaultTokenProviders();
 

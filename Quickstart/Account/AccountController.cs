@@ -77,6 +77,14 @@ namespace IdentityServer4.Quickstart.UI
                     , button);
             }
 
+            var vacancy = await _userManager.FindByNameAsync(input.Username);
+            if (vacancy != null)
+            {
+                ModelState.AddModelError("Register", "Username is taken.");
+
+                return View("Register", input); 
+            }
+
             if (ModelState.IsValid)
             {
                 var registration = await _userManager.CreateAsync(
@@ -88,15 +96,22 @@ namespace IdentityServer4.Quickstart.UI
 
                 if (registration.Succeeded)
                 {
-                    return await Login(
-                        new LoginInputModel
-                        { 
-                            RememberLogin = false, 
-                            ReturnUrl = input.ReturnUrl, 
-                            Username = input.Username,
-                            Password = input.Password
-                        }, 
-                        LoginIntent);
+                    var signin = await _signInManager
+                        .PasswordSignInAsync(input.Username, input.Password, false, true);
+
+                    if (signin.Succeeded)
+                    {
+                        return RedirectToAction(
+                        "Index", 
+                        "Profile", 
+                        new { ReturnUrl = input.ReturnUrl });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Signin", "Error while Signing in.");
+
+                        return View("Register", input);
+                    }
                 }
                 else
                 {
