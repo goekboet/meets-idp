@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
@@ -15,21 +16,55 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer4.Quickstart.UI
 {
+    public class ProfileClaim
+    {
+        public static bool MapsClaimName(string n) => 
+            IdsNames.Keys.Contains(n);
+
+        public static string MapClaimName(string n) =>
+            MapsClaimName(n) ? IdsNames[n] : n;
+        public static Dictionary<string, string> IdsNames = new Dictionary<string, string>
+        {
+            ["name"] = "Friendly name",
+            ["family_name"] = "family_name",
+            ["given_name"] = "given_name",
+            ["middle_name"] = "middle_name",
+            ["nickname"] = "nickname",
+            ["preferred_username"] = "Account name",
+            ["profile"] = "profile",
+            ["picture"] = "picture",
+            ["website"] = "website",
+            ["gender"] = "gender",
+            ["birthdate"] = "birthdate",
+            ["zoneinfo"] = "zoneinfo",
+            ["locale"] = "locale",
+            ["updated_at"] = "updated_at"
+        };
+        public string Name { get; set; }
+        public string Value { get; set; }
+    }
+
     public class ProfileUpdate
     {
 
-        public ProfileUpdate() => new ProfileUpdate(false);
+        public ProfileUpdate() => new ProfileUpdate(
+            false,
+            new ProfileClaim[0]);
 
-        public ProfileUpdate(bool oidclogin)
+        public ProfileUpdate(
+            bool oidclogin,
+            ProfileClaim[] claims)
         {
+            Claims = claims ?? new ProfileClaim[0];
             OicdLogin = oidclogin;
         }
+
+        public ProfileClaim[] Claims { get; }
 
         public bool OicdLogin { get; }
 
         public string ReturnUrl { get; set; }
 
-        [Required]
         public string Name { get; set; }
         public override string ToString() => Name;
 
@@ -75,13 +110,24 @@ namespace IdentityServer4.Quickstart.UI
             _logger = logger;
             _clientStore = clientStore;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index(string returnUrl)
         {
-            var oidclogin = await _interaction
+            var oidc = await _interaction
                 .GetAuthorizationContextAsync(returnUrl);
 
-            return View(new ProfileUpdate(oidclogin != null)
+            var q = from c in User.Claims
+                    where ProfileClaim.MapsClaimName(c.Type)
+                    select new ProfileClaim
+                    {
+                        Name = ProfileClaim.MapClaimName(c.Type),
+                        Value = c.Value
+                    };
+
+            return View(new ProfileUpdate(
+                oidclogin: oidc != null,
+                claims: q.ToArray())
             {
                 ReturnUrl = returnUrl,
                 Name = NameClaim
@@ -101,9 +147,9 @@ namespace IdentityServer4.Quickstart.UI
                 switch (intent)
                 {
                     case ProceedIntent:
-                        if (ModelState.IsValid)
+                        if (update.ToNameClaim is Claim n)
                         {
-                            var errors = await UpdateName(update);
+                            var errors = await UpdateName(n);
                             if (errors.Length == 0)
                             {
                                 var oidcProceed = await oidc();
@@ -168,20 +214,20 @@ namespace IdentityServer4.Quickstart.UI
             return Redirect(returnUrl);
         }
 
-        private async Task<(string k, string v)[]> UpdateName(ProfileUpdate update)
+        private async Task<(string k, string v)[]> UpdateName(Claim update)
         {
             var userRecord = await _userManager.GetUserAsync(User);
             var claimsrecord = await _userManager.GetClaimsAsync(userRecord);
             var current = claimsrecord.FirstOrDefault(x => x.Type == "name");
 
             IdentityResult r = (current != null)
-                ? await _userManager.ReplaceClaimAsync(userRecord, current, update.ToNameClaim)
-                : await _userManager.AddClaimAsync(userRecord, update.ToNameClaim);
+                ? await _userManager.ReplaceClaimAsync(userRecord, current, update)
+                : await _userManager.AddClaimAsync(userRecord, update);
 
             if (r.Succeeded)
             {
                 await _signInManager.RefreshSignInAsync(userRecord);
-                UpdateRequestIdentity(update.ToNameClaim);
+                UpdateRequestIdentity(update);
 
                 _logger.LogInformation("Updated name-claim for {UserId} from {current} to {New}", UsernameClaim, current?.Value ?? "n/a", NameClaim);
 
