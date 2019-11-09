@@ -59,7 +59,7 @@ namespace IdentityServer4.Quickstart.UI
             OicdLogin = oidclogin;
         }
 
-        public ProfileClaim[] Claims { get; }
+        public ProfileClaim[] Claims { get; set; }
 
         public bool OicdLogin { get; }
 
@@ -111,13 +111,8 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index(string returnUrl)
-        {
-            var oidc = await _interaction
-                .GetAuthorizationContextAsync(returnUrl);
-
-            var q = from c in User.Claims
+        private IEnumerable<ProfileClaim> ProfileClaims =>
+            from c in User.Claims
                     where ProfileClaim.MapsClaimName(c.Type)
                     select new ProfileClaim
                     {
@@ -125,9 +120,15 @@ namespace IdentityServer4.Quickstart.UI
                         Value = c.Value
                     };
 
+        [HttpGet]
+        public async Task<IActionResult> Index(string returnUrl)
+        {
+            var oidc = await _interaction
+                .GetAuthorizationContextAsync(returnUrl);
+
             return View(new ProfileUpdate(
                 oidclogin: oidc != null,
-                claims: q.ToArray())
+                claims: ProfileClaims.ToArray())
             {
                 ReturnUrl = returnUrl,
                 Name = NameClaim
@@ -159,6 +160,7 @@ namespace IdentityServer4.Quickstart.UI
                                 }
                                 else
                                 {
+                                    update.Claims = ProfileClaims.ToArray();
                                     return View("Index", update);
                                 }
                             }

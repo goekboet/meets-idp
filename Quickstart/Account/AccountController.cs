@@ -61,6 +61,20 @@ namespace IdentityServer4.Quickstart.UI
             return View(new RegisterInput { ReturnUrl = returnUrl });
         }
 
+        private IActionResult Error(string msg, RegisterInput i) => Error(new [] { msg }, i);
+        private IActionResult Error(string[] msg, RegisterInput i)
+        {
+            foreach (var e in msg)
+            {
+                ModelState.TryAddModelError("Register", e);
+            }
+
+            return View("Register", i);
+        }
+
+        private IActionResult TryLater(RegisterInput i) => 
+            Error("Unable to register. Try again later.", i);
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(
@@ -77,57 +91,60 @@ namespace IdentityServer4.Quickstart.UI
                     , button);
             }
 
-            var vacancy = await _userManager.FindByNameAsync(input.Username);
-            if (vacancy != null)
+            try
             {
-                ModelState.AddModelError("Register", "Username is taken.");
-
-                return View("Register", input); 
-            }
-
-            if (ModelState.IsValid)
-            {
-                var registration = await _userManager.CreateAsync(
-                new IdsUser
+                var vacancy = await _userManager.FindByEmailAsync(input.Email);
+                if (vacancy != null)
                 {
-                    UserName = input.Username
-                },
-                input.Password);
+                    return Error(
+                        "An account is already registered with that email.", 
+                        input);
+                }
 
-                if (registration.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    var signin = await _signInManager
-                        .PasswordSignInAsync(input.Username, input.Password, false, true);
-
-                    if (signin.Succeeded)
+                    var registration = await _userManager.CreateAsync(
+                    new IdsUser
                     {
-                        return RedirectToAction(
-                        "Index", 
-                        "Profile", 
-                        new { ReturnUrl = input.ReturnUrl });
+                        Email = input.Email,
+                        UserName = Guid.NewGuid().ToString()
+                    },
+                    input.Password);
+
+                    if (registration.Succeeded)
+                    {
+                        var user = await _userManager.FindByEmailAsync(input.Email);
+                        if (user == null)
+                        {
+                            _logger.LogWarning("Could not find user by {email} after fetch", input.Email);
+                            return TryLater(input);
+                        }
+
+                        await  _signInManager.SignInAsync(user, true);
+                        return RedirectToAction("Index", "Profile", new { ReturnUrl = input.ReturnUrl });
                     }
                     else
                     {
-                        ModelState.AddModelError("Signin", "Error while Signing in.");
-
-                        return View("Register", input);
+                        _logger.LogWarning("Failed to register {input}.", input);
+                        return Error(
+                            registration.Errors.Select(x => x.Description).ToArray(), 
+                            input);
                     }
+
                 }
                 else
                 {
-                    foreach (var e in registration.Errors)
-                    {
-                        ModelState.AddModelError(e.Code, e.Description);
-                    }
-
                     return View("Register", input);
-                }
-
+                }   
             }
-            else
+            catch (Exception e)
             {
-                return View("Register", input);
+                _logger.LogError("Exception while registering user.", e);
+                ModelState.TryAddModelError("Register", "Unable to register. Try again later.");
+
+                return View("Index", input);
             }
+            
         }
 
         /// <summary>
@@ -186,13 +203,18 @@ namespace IdentityServer4.Quickstart.UI
                     return Redirect("~/");
                 }
             }
-
+            
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.TryAddModelError("Email", "Wrong username/password.");
+            }
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
+                
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
 
                     if (context != null)
@@ -224,7 +246,7 @@ namespace IdentityServer4.Quickstart.UI
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Email, "invalid credentials", clientId: context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -309,7 +331,7 @@ namespace IdentityServer4.Quickstart.UI
                 {
                     EnableLocalLogin = local,
                     ReturnUrl = returnUrl,
-                    Username = context?.LoginHint,
+                    Email = context?.LoginHint,
                 };
 
                 if (!local)
@@ -352,7 +374,7 @@ namespace IdentityServer4.Quickstart.UI
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
                 ReturnUrl = returnUrl,
-                Username = context?.LoginHint,
+                Email = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
             };
         }
@@ -360,7 +382,7 @@ namespace IdentityServer4.Quickstart.UI
         private async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
         {
             var vm = await BuildLoginViewModelAsync(model.ReturnUrl);
-            vm.Username = model.Username;
+            vm.Email = model.Email;
             vm.RememberLogin = model.RememberLogin;
             return vm;
         }

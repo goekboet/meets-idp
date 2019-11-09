@@ -8,6 +8,7 @@ namespace gateway
     public class IdsUser : IdentityUser
     {
     }
+
     public class UsersDb : IdentityDbContext<IdsUser>
     {
         public UsersDb(DbContextOptions<UsersDb> options)
