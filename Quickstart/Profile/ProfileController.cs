@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -8,7 +7,6 @@ using gateway;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,19 +24,7 @@ namespace IdentityServer4.Quickstart.UI
         public static Dictionary<string, string> IdsNames = new Dictionary<string, string>
         {
             ["name"] = "Friendly name",
-            ["family_name"] = "family_name",
-            ["given_name"] = "given_name",
-            ["middle_name"] = "middle_name",
-            ["nickname"] = "nickname",
-            ["preferred_username"] = "Account name",
-            ["profile"] = "profile",
-            ["picture"] = "picture",
-            ["website"] = "website",
-            ["gender"] = "gender",
-            ["birthdate"] = "birthdate",
-            ["zoneinfo"] = "zoneinfo",
-            ["locale"] = "locale",
-            ["updated_at"] = "updated_at"
+            ["updated_at"] = "Last updated"
         };
         public string Name { get; set; }
         public string Value { get; set; }
@@ -221,12 +207,30 @@ namespace IdentityServer4.Quickstart.UI
             var userRecord = await _userManager.GetUserAsync(User);
             var claimsrecord = await _userManager.GetClaimsAsync(userRecord);
             var current = claimsrecord.FirstOrDefault(x => x.Type == "name");
+            var updated = claimsrecord.FirstOrDefault(x => x.Type == "updated_at");
 
-            IdentityResult r = (current != null)
+            IdentityResult nameupdate = (current != null)
                 ? await _userManager.ReplaceClaimAsync(userRecord, current, update)
                 : await _userManager.AddClaimAsync(userRecord, update);
 
-            if (r.Succeeded)
+            var ts = new Claim(
+                "updated_at",
+                DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString());
+
+            IdentityResult tsUpdate = (updated != null)
+                ? await _userManager.ReplaceClaimAsync(userRecord, updated, ts)
+                : await _userManager.AddClaimAsync(userRecord, ts);
+
+            if (!tsUpdate.Succeeded)
+            {
+                _logger.LogWarning("Failed to write updated_at {claim} after update for {user}: {msg}.",
+                    ts, 
+                    userRecord, 
+                    string.Join(", ", tsUpdate.Errors.Select(x => $"{x.Code} {x.Description}"))
+                );
+            }
+
+            if (nameupdate.Succeeded)
             {
                 await _signInManager.RefreshSignInAsync(userRecord);
                 UpdateRequestIdentity(update);
@@ -237,7 +241,7 @@ namespace IdentityServer4.Quickstart.UI
             }
             else
             {
-                return r.Errors.Select(x => (x.Code, x.Description)).ToArray();
+                return nameupdate.Errors.Select(x => (x.Code, x.Description)).ToArray();
             }
         }
     }

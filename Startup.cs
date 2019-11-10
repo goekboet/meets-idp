@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.DataProtection;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Ids.Features.EmailUsername;
 
 namespace gateway
 {
@@ -82,6 +83,7 @@ namespace gateway
                 //options.Discovery = new IdentityServer4.Configuration.DiscoveryOptions
             })
                 .AddAspNetIdentity<IdsUser>()
+                .AddResourceOwnerValidator<MapUsernameToEmail>()
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Config.GetApis())
                 .AddInMemoryClients(Configuration.GetSection("clients"))

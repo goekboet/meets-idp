@@ -8,6 +8,7 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
+using Custom = Ids.Features.EmailUsername;
 
 namespace gateway
 {
@@ -18,7 +19,8 @@ namespace gateway
             return new IdentityResource[]
             {
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
+                new Custom.Profile(),
+                new IdentityResources.Email()
             };
         }
 
