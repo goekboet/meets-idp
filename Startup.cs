@@ -103,9 +103,9 @@ namespace gateway
             services.AddControllersWithViews();
 
             services.AddAuthentication()
-                .AddOpenIdConnect("proper", opts =>
+                .AddOpenIdConnect("Okta", null, opts =>
                 {
-                    Configuration.GetSection("Proper").Bind(opts);
+                    Configuration.GetSection("Okta").Bind(opts);
                 });
 
             if (Env.EnvironmentName == "Development")
