@@ -73,14 +73,15 @@ namespace gateway
                 .AddEntityFrameworkStores<UsersDb>()
                 .AddDefaultTokenProviders();
 
+            services.ConfigureApplicationCookie(opts =>
+            {
+                opts.Cookie.Name = "sso";
+                opts.Cookie.IsEssential = true;
+            });
+
             var builder = services.AddIdentityServer(options =>
             {
                 Configuration.GetSection("IdentityServerOptions").Bind(options);
-                // options.Events.RaiseErrorEvents = true;
-                // options.Events.RaiseInformationEvents = true;
-                // options.Events.RaiseFailureEvents = true;
-                // options.Events.RaiseSuccessEvents = true;
-                //options.Discovery = new IdentityServer4.Configuration.DiscoveryOptions
             })
                 .AddAspNetIdentity<IdsUser>()
                 .AddResourceOwnerValidator<MapUsernameToEmail>()
@@ -97,15 +98,22 @@ namespace gateway
                     };
                     options.EnableTokenCleanup = true;
                 });
-
-            
             
             services.AddControllersWithViews();
 
             services.AddAuthentication()
-                .AddOpenIdConnect("Okta", null, opts =>
+                .AddOpenIdConnect("Okta", "Okta", opts =>
                 {
                     Configuration.GetSection("Okta").Bind(opts);
+                    opts.Scope.Add("email");
+                    opts.SaveTokens = true;
+                })
+                .AddGitHub("Github", opts => 
+                {
+                    Configuration.Bind("Github", opts);
+                    opts.Scope.Add("read:user");
+                    opts.Scope.Add("user:email");
+                    opts.SaveTokens = true;
                 });
 
             if (Env.EnvironmentName == "Development")
@@ -133,7 +141,7 @@ namespace gateway
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseStaticFiles();
             app.UseRouting();
 

@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/gateway.csproj"
+                "${workspaceFolder}/ids.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -17,7 +17,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/gateway.csproj"
+                "${workspaceFolder}/ids.csproj"
             ],
             "problemMatcher": "$tsc"
         },
@@ -28,7 +28,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/gateway.csproj"
+                "${workspaceFolder}/ids.csproj"
             ],
             "problemMatcher": "$tsc"
         }
