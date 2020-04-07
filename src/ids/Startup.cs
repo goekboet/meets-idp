@@ -14,6 +14,8 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Ids.Features.EmailUsername;
+using IdentityServer4.Stores;
+using gateway.Pki;
 
 namespace gateway
 {
@@ -98,6 +100,30 @@ namespace gateway
                     };
                     options.EnableTokenCleanup = true;
                 });
+            // var keymaterial = Configuration.GetSection("Keymaterial");
+            // var cert = new X509Certificate2(
+            //     keymaterial.GetValue<string>("Path"), 
+            //     keymaterial.GetValue<string>("Pass"));
+            
+            // builder.AddValidationKey(cert);
+            // if (Env.EnvironmentName == "Development")
+            // {
+            //     builder.AddDeveloperSigningCredential();
+            // }
+            // else
+            // {
+            //     var keymaterial = Configuration.GetSection("Keymaterial");
+                
+            //     var cert = new X509Certificate2(
+            //         keymaterial.GetValue<string>("Path"), 
+            //         keymaterial.GetValue<string>("Pass"));
+                
+            //     builder.AddValidationKey(cert);
+            //     //builder.AddValidationKey()
+            // }
+
+            services.AddTransient<ISigningCredentialStore, SigningKey>();
+            services.AddTransient<IValidationKeysStore, ValidationKey>();
             
             services.AddControllersWithViews();
 
@@ -116,20 +142,7 @@ namespace gateway
                     opts.SaveTokens = true;
                 });
 
-            if (Env.EnvironmentName == "Development")
-            {
-                builder.AddDeveloperSigningCredential();
-            }
-            else
-            {
-                var keymaterial = Configuration.GetSection("Keymaterial");
-                
-                var cert = new X509Certificate2(
-                    keymaterial.GetValue<string>("Path"), 
-                    keymaterial.GetValue<string>("Pass"));
-
-                builder.AddSigningCredential(cert);
-            }
+            
         }
 
         public void Configure(

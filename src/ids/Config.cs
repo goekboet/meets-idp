@@ -38,8 +38,14 @@ namespace gateway
                         new Scope 
                         { 
                             Name = "bookings", 
-                            DisplayName = "Manage my",
+                            DisplayName = "Claim times in my name",
                             Description = "Add, remove and list bookings" 
+                        },
+                        new Scope
+                        {
+                            Name = "publish",
+                            DisplayName = "Publish times in my names to the public",
+                            Description = "Add and remove times"
                         }
                     }
                 }
