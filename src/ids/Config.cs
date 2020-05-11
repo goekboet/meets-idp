@@ -23,33 +23,5 @@ namespace gateway
                 new IdentityResources.Email()
             };
         }
-
-        public static IEnumerable<ApiResource> GetApis()
-        {
-            return new ApiResource[]
-            {
-                new ApiResource
-                {
-                    Name = "https://broker.ego",
-                    DisplayName = "Meets broker api",
-                    Description = "Provides access to means of communication on a meetingpoint.",
-                    Scopes = 
-                    { 
-                        new Scope 
-                        { 
-                            Name = "bookings", 
-                            DisplayName = "Claim times in my name",
-                            Description = "Add, remove and list bookings" 
-                        },
-                        new Scope
-                        {
-                            Name = "publish",
-                            DisplayName = "Publish times in my names to the public",
-                            Description = "Add and remove times"
-                        }
-                    }
-                }
-            };
-        }
     }
 }

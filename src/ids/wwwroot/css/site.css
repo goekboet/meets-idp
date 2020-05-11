@@ -1,82 +1,150 @@
 ﻿body {
-  margin-top: 65px;
+  padding: 0;
+  margin: 0;
+  line-height: 1.4;
 }
-.navbar-header {
-  position: relative;
-  top: -4px;
+
+iframe {
+  border:0;
 }
-.navbar-brand > .icon-banner {
-  position: relative;
-  top: -2px;
-  display: inline;
+
+p, fieldset {
+  margin: 0;
+  padding: 0 0 1em 0;
+  border: none;
 }
-.icon {
-  position: relative;
-  top: -10px;
+
+ul {
+  margin:0;
+  padding:0;
+  list-style: none;
 }
-.logged-out iframe {
-  display: none;
-  width: 0;
-  height: 0;
+
+li a {
+  display: block;
+  padding: 1em;
+  margin: 0 0 1em 0;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 5px;
 }
-.page-consent .client-logo {
-  float: left;
+
+p:last-child {
+  padding: 0;
 }
-.page-consent .client-logo img {
-  width: 80px;
-  height: 80px;
+
+h1, h2, h3, form {
+  padding:0;
+  margin:0;
 }
-.page-consent .consent-buttons {
-  margin-top: 25px;
+
+label {
+  font-size: small;
 }
-.page-consent .consent-form .consent-scopecheck {
-  display: inline-block;
-  margin-right: 5px;
-}
-.page-consent .consent-form .consent-description {
-  margin-left: 25px;
-}
-.page-consent .consent-form .consent-description label {
-  font-weight: normal;
-}
-.page-consent .consent-form .consent-remember {
-  padding-left: 16px;
-}
-.grants .page-header {
-  margin-bottom: 10px;
-}
-.grants .grant {
-  margin-top: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid lightgray;
-}
-.grants .grant img {
-  width: 100px;
-  height: 100px;
-}
-.grants .grant .clientname {
-  font-size: 140%;
+
+a {
+  text-decoration: none;
   font-weight: bold;
+  color: inherit;
 }
-.grants .grant .granttype {
-  font-size: 120%;
-  font-weight: bold;
+
+a:hover {
+  text-decoration: underline;
 }
-.grants .grant .created {
-  font-size: 120%;
-  font-weight: bold;
+
+hr {
+  margin: 1em 0 1em 0;
+  border-style: solid;
+  border-width: thin;
 }
-.grants .grant .expires {
-  font-size: 120%;
-  font-weight: bold;
+
+.forminput {
+  display: flex;
+  flex-direction: column;
 }
-.grants .grant li {
-  list-style-type: none;
-  display: inline;
+
+.forminput span {
+  font-size: small;
+  font-style: italic;
+  align-self: flex-end;
+  height: 1em;
 }
-.grants .grant li:after {
-  content: ', ';
+
+button {
+  border: solid;
+  border-width: thin;
+  font-size: 1em;
+  margin-left: 1em;
+  padding: 0.5em;
+  border-radius: 5px;
 }
-.grants .grant li:last-child:after {
-  content: '';
+
+input[type=text], input[type=password], input[type=email] {
+  height: 2em;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: darkgreen;
+  width: 100%;
+  font-size: 1em;
+  color: darkgreen;
+  padding: 0 0 0 0.5em;
+  box-sizing: border-box;
+}
+
+input[type=checkbox] {
+  zoom: 1.5;
+}
+
+input:focus, button:focus, a:focus {
+  outline-color: darkgreen;
+}
+
+.rememberme {
+  display: flex;
+  align-items: center;
+}
+
+.root-view {
+  background-color: gainsboro;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.formbuttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media screen and (min-width: 600px) {
+  .root-view {
+      background-color: gainsboro;
+      height: 100vh;
+      width: 550px;
+      margin-top:0;
+      margin-bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      font-family: sans-serif;
+  }    
+}
+.content {
+  padding: 1em;
+}
+
+.heavy {
+  background-color: darkgreen;
+  color: lightgreen;
+  border-color: darkgreen;
+}
+
+.light {
+  background-color: lightgreen;
+  color: darkgreen;
+  border-color: darkgreen;
 }

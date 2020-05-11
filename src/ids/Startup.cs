@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Ids.Features.EmailUsername;
 using IdentityServer4.Stores;
 using gateway.Pki;
+using Microsoft.AspNetCore.Http;
 
 namespace gateway
 {
@@ -79,6 +80,7 @@ namespace gateway
             {
                 opts.Cookie.Name = "sso";
                 opts.Cookie.IsEssential = true;
+                opts.Cookie.SameSite = SameSiteMode.Lax;
             });
 
             var builder = services.AddIdentityServer(options =>
@@ -88,8 +90,8 @@ namespace gateway
                 .AddAspNetIdentity<IdsUser>()
                 .AddResourceOwnerValidator<MapUsernameToEmail>()
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApis())
-                .AddInMemoryClients(Configuration.GetSection("clients"))
+                .AddInMemoryApiResources(Configuration.GetSection("Apis"))
+                .AddInMemoryClients(Configuration.GetSection("Clients"))
                 .AddOperationalStore(options => {
                     options.ConfigureDbContext = builder => 
                     {
@@ -100,30 +102,8 @@ namespace gateway
                     };
                     options.EnableTokenCleanup = true;
                 });
-            // var keymaterial = Configuration.GetSection("Keymaterial");
-            // var cert = new X509Certificate2(
-            //     keymaterial.GetValue<string>("Path"), 
-            //     keymaterial.GetValue<string>("Pass"));
-            
-            // builder.AddValidationKey(cert);
-            // if (Env.EnvironmentName == "Development")
-            // {
-            //     builder.AddDeveloperSigningCredential();
-            // }
-            // else
-            // {
-            //     var keymaterial = Configuration.GetSection("Keymaterial");
-                
-            //     var cert = new X509Certificate2(
-            //         keymaterial.GetValue<string>("Path"), 
-            //         keymaterial.GetValue<string>("Pass"));
-                
-            //     builder.AddValidationKey(cert);
-            //     //builder.AddValidationKey()
-            // }
 
-            services.AddTransient<ISigningCredentialStore, SigningKey>();
-            services.AddTransient<IValidationKeysStore, ValidationKey>();
+            services.SetupKeyStoreMigration(Configuration);
             
             services.AddControllersWithViews();
 

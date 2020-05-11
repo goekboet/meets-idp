@@ -1,0 +1,101 @@
+{
+    "Clients": [
+        {
+          "ClientId": "dev",
+          "ClientName": "Developer Client",
+          "ClientSecrets": [
+            {
+              "Value": "7yYOmqPGc68kDReiZgSANhqOCB0f/soqXtDjIZ/BhWc="
+            }
+          ],
+          "AllowedGrantTypes": [
+            "password"
+          ],
+          "AllowedScopes": [
+            "openid",
+            "profile",
+            "bookings",
+            "offline_access"
+          ]
+        },
+        {
+          "ClientId": "publish",
+          "ClientName": "Byappt appointment publisher",
+          "RequireConsent": false,
+          "AccessTokenLifetime": 28800,
+          "ClientSecrets": [
+            {
+              "Value": "UMHdCE1sCGJP1j3ROBuYj8dR8mQnj//J9F3bI36e8FM="
+            }
+          ],
+          "AllowedGrantTypes": [
+            "authorization_code"
+          ],
+          "AllowedScopes": [
+            "openid",
+            "profile",
+            "publish"
+          ],
+          "AllowOfflineAccess": true,
+          "RedirectUris": [
+            "http://localhost:5070/signin-oidc"
+          ],
+          "PostLogoutRedirectUris": [
+            "http://localhost:5070/signout-callback-oidc"
+          ],
+          "EnableLocalLogin": false,
+          "IdentityProviderRestrictions": [
+            "Okta",
+            "Github"
+          ]
+        },
+        {
+          "ClientId": "meets",
+          "ClientName": "Appointments",
+          "RequireConsent": false,
+          "ClientSecrets": [
+            {
+              "Value": "TZyfD1CybAcT1+jyyTw5VsRFXo7cM5R7gI45CowrrwQ="
+            }
+          ],
+          "AllowedGrantTypes": [
+            "authorization_code"
+          ],
+          "AllowedScopes": [
+            "offline_access",
+            "openid",
+            "profile",
+            "bookings"
+          ],
+          "AllowOfflineAccess": true,
+          "RefreshTokenExpiration": "Sliding",
+          "RedirectUris": [
+            "https://meets.ego/signin-oidc",
+            "http://localhost:5010/signin-oidc"
+          ],
+          "PostLogoutRedirectUris": [
+            "https://meets.ego/signout-callback-oidc",
+            "http://localhost:5010/signout-callback-oidc"
+          ]
+        }
+      ],
+    "Apis": [
+        {
+            "Name": "https://broker.ego",
+            "DisplayName": "Meets broker api",
+            "Description": "Provides access to means of communication on a meetingpoint.",
+            "Scopes": [
+                {
+                    "Name": "bookings",
+                    "DisplayName": "Claim times in my name",
+                    "Description": "Add, remove and list bookings"
+                },
+                {
+                    "Name": "publish",
+                    "DisplayName": "Publish times in my names to the public",
+                    "Description": "Add and remove times"
+                }
+            ]
+        }
+    ]
+}

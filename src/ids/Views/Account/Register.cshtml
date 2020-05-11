@@ -1,45 +1,36 @@
 @model RegisterInput;
 
-<div>
-    <div class="page-header">
+<div class="root-view">
+    <div class="content heavy">
         <h1>Register</h1>
     </div>
-
-    <partial name="_ValidationSummary" />
-
-    <div class="row">
-
-        <div class="col-sm-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Register</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <form asp-route="Register" method="post" >
-                            <input type="hidden" asp-for="ReturnUrl">
-
-                            <fieldset>
-                                <div class="form-group">
-                                    <label asp-for="Email"></label>
-                                    <input class="form-control" placeholder="Email" asp-for="Email" autofocus>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Password"></label>
-                                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="PasswordAgain"></label>
-                                    <input type="password" class="form-control" placeholder="Password" asp-for="PasswordAgain" autocomplete="off">
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" name="button" value="register">Register</button>
-                                    <button class="btn btn-default" name="button" value="cancel">Cancel</button>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
+    <div class="content light">
+        <form asp-route="Register" method="post" >
+            <h3 class="panel-title">Register</h3>
+            <p>Your e-mail is your username. Pick a strong password.</p>
+            <input type="hidden" asp-for="ReturnUrl">
+            <fieldset>
+                <div class="forminput">
+                    <label asp-for="Email"></label>
+                    <input placeholder="Email" asp-for="Email" autofocus>
+                    <span asp-validation-for="Email"></span>
                 </div>
-        </div>
+                <div class="forminput">
+                    <label asp-for="Password"></label>
+                    <input type="password" placeholder="Password" asp-for="Password" autocomplete="off">
+                    <span asp-validation-for="Password"></span>
+                </div>
+                <div class="forminput">
+                    <label asp-for="PasswordAgain"></label>
+                    <input type="password" placeholder="Password" asp-for="PasswordAgain" autocomplete="off">
+                    <span asp-validation-for="PasswordAgain"></span>
+                </div>
+            </fieldset>
+            <partial name="_ValidationSummary" />
+            <div class="formbuttons">
+                <button class="light" name="button" value="cancel">Cancel</button>
+                <button class="heavy" name="button" value="register">Register</button>
+            </div>
+        </form>
     </div>
 </div>

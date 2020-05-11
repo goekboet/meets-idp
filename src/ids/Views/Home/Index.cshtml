@@ -2,38 +2,18 @@
     var version = typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.GetName().Version.ToString();
 }
 
-<div class="welcome-page">
-    <div class="row page-header">
-        <div class="col-sm-10">
-            <h1>
-                <img class="icon" src="~/icon.jpg">
-                Welcome to IdentityServer4
-                <small>(version @version)</small>
-            </h1>
-        </div>
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Identityserver</h1>
     </div>
-
-    <div class="row">
-        <div class="col-sm-8">
-            <p>
-                IdentityServer publishes a
-                <a href="~/.well-known/openid-configuration">discovery document</a>
-                where you can find metadata and links to all the endpoints, key material, etc.
-            </p>
-        </div>
-        <div class="col-sm-8">
-            <p>
-                Click <a href="~/grants">here</a> to manage your stored grants.
-            </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-8">
-            <p>
-                Here are links to the
-                <a href="https://github.com/identityserver/IdentityServer4">source code repository</a>,
-                and <a href="https://github.com/identityserver/IdentityServer4.Samples">ready to use samples</a>.
-            </p>
-        </div>
+    <div class="content light">
+        <h3>Local account</h3>
+        <p>You can <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="/">Register</a> an account if you haven't already or <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/">Log in</a> if you have.</p>
+        <h3>Discovery endpoint</h3>
+        <p>
+            IdentityServer publishes a
+            <a href="~/.well-known/openid-configuration">discovery document</a>
+            where you can find metadata and links to all the endpoints, key material, etc.
+        </p>
     </div>
 </div>

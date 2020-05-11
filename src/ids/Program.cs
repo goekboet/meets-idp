@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Formatting.Elasticsearch;
+using Microsoft.Extensions.Configuration;
 
 namespace gateway
 {
@@ -41,6 +42,12 @@ namespace gateway
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.AddJsonFile("configuration.json", 
+                    optional: true, 
+                    reloadOnChange: true);
+            })
                 .ConfigureWebHostDefaults(webBuilder =>
         {
             webBuilder

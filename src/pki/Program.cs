@@ -1,44 +1,39 @@
 ﻿using System.IO;
-using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Asn1.Pkcs;
 using System;
+using IdentityServer4.Configuration;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Linq;
 
 namespace pki
 {
     class Program
     {
-        public static RsaSecurityKey PrivateKeyFromPem(string keyPairPem)
+        static int Main(string[] args)
         {
-            PemReader pemReader = new PemReader(new StringReader(keyPairPem));
-            AsymmetricCipherKeyPair keyPair = (AsymmetricCipherKeyPair)pemReader.ReadObject();
-            RsaPrivateCrtKeyParameters privateKeyParameters = (RsaPrivateCrtKeyParameters)keyPair.Private; 
-            RSAParameters rsaParameters = DotNetUtilities.ToRSAParameters(privateKeyParameters);
-            return new RsaSecurityKey(rsaParameters);
-        }
+            var path = args.Length > 0
+                ? args[0]
+                : "rotation";
 
-        public static RsaSecurityKey PublicKeyFromPem(string publicKeyPem)
-        {
-            PemReader pemReader = new PemReader(new StringReader(publicKeyPem));
-            RsaKeyParameters publicKeyParameters = (RsaKeyParameters)pemReader.ReadObject();
-            RSAParameters rsaParameters = DotNetUtilities.ToRSAParameters(publicKeyParameters);
-            return new RsaSecurityKey(rsaParameters);
-        }
+            var keyOrder = 
+                Directory.EnumerateFiles(path)
+                .Select(x => Int32.Parse(x.Split('.')[1]))
+                .OrderByDescending(x => x)
+                .ToList();
+            
+            var nextFilename = $"pkey.{keyOrder.FirstOrDefault() + 1}.jwk";
+            var key = CryptoHelper.CreateRsaSecurityKey();
+            var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(key);
+            var json = JsonSerializer.Serialize(jwk);
+            
+            File.WriteAllText($"{path}/{nextFilename}", json);
+            foreach (var retire in keyOrder.Skip(2))
+            {
+                File.Delete($"{path}/pkey.{retire}.jwk");
+            }
 
-        static void Main(string[] args)
-        {
-            var pems = File.ReadAllText("pems/ids.private.1.pem");
-            var key = PrivateKeyFromPem(pems);
-            
-            // var pfx = File.ReadAllBytes("ego.byappt.1.pfx");
-            // var cert = new X509Certificate2(pfx);
-            
-            Console.WriteLine($"Thumbprint: {key.KeyId}");
-            Console.WriteLine($"Has private key: {key.PrivateKeyStatus}");
+            return 1;
         }
     }
 }
