@@ -6,8 +6,7 @@
     </div>
     <div class="content light">
         <form asp-route="Login" method="post">
-            <h3 class="panel-title">Byappt account</h3>
-            <p>Log in using an account you have with Byappt. You can <a asp-controller="Account" asp-action="Register" asp-route-returnUrl=@Model.ReturnUrl>Register</a> an account if you haven't already.</p>
+            <h2>Byappt account</h2>
             <input type="hidden" asp-for="ReturnUrl" />
             <fieldset>
             <div class="forminput">
@@ -21,16 +20,18 @@
                 <span asp-validation-for="Password"></span>
              </div>
              </fieldset>
+             <p>Log in using an account you have with Byappt. You can <a asp-controller="Account" asp-action="Register" asp-route-returnUrl=@Model.ReturnUrl>Register</a> an account if you haven't already.</p>
         @if (Model.AllowRememberLogin)
         {
             <h3>Remember login</h3>
-            <p>By checking this box you'll remain signed in until your session expires, even if you close your browser. Otherwise closing the browser will always log you out.</p>
             <div class="rememberme">
                 <input asp-for="RememberLogin">
                 <label asp-for="RememberLogin">
                     Remember My Login
                 </label>
             </div>
+            <p>By checking this box you'll remain signed in until your session expires, even if you close your browser. Otherwise closing the browser will always log you out.</p>
+            
         }
             <partial name="_ValidationSummary" />
             <div class="formbuttons">
@@ -43,8 +44,8 @@
 
     @if(Model.VisibleExternalProviders.Any())
     {   
-        <h3>External Login</h3>
-        <p>Login to byappt using another authentication service.</p>
+        <h2>Other Accounts</h2>
+        <p>Sign in using an account on one of these sites.</p>
         <ul>
         @foreach (var provider in Model.VisibleExternalProviders)
         {
