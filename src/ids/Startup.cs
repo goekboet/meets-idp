@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +13,6 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Ids.Features.EmailUsername;
-using IdentityServer4.Stores;
 using gateway.Pki;
 using Microsoft.AspNetCore.Http;
 
@@ -103,7 +101,7 @@ namespace gateway
                     options.EnableTokenCleanup = true;
                 });
 
-            services.SetupKeyStoreMigration(Configuration);
+            services.SetupKeyStore();
             
             services.AddControllersWithViews();
 

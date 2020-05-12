@@ -14,14 +14,12 @@ using JsonWebKey = Microsoft.IdentityModel.Tokens.JsonWebKey;
 
 namespace gateway.Pki
 {
-
-
-    public class FullyMigratedSigningKeyStore : ISigningCredentialStore
+    public class OnFileSigningKeyStore : ISigningCredentialStore
     {
         public static string RS256 = IdentityServerConstants.RsaSigningAlgorithm.RS256.ToString();
         public IFileProvider Files { get; }
 
-        public FullyMigratedSigningKeyStore(
+        public OnFileSigningKeyStore(
             IWebHostEnvironment env)
         {
             Files = env.ContentRootFileProvider;
@@ -60,12 +58,12 @@ namespace gateway.Pki
         }
     }
 
-    public class FullyMigratedKeysetStore : IValidationKeysStore
+    public class OnFileKeysetStore : IValidationKeysStore
     {
         public static string RS256 = IdentityServerConstants.RsaSigningAlgorithm.RS256.ToString();
         IFileProvider Files { get; }
 
-        public FullyMigratedKeysetStore(
+        public OnFileKeysetStore(
             IWebHostEnvironment env
         )
         {
