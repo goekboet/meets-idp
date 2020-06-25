@@ -62,7 +62,7 @@ namespace gateway
             services.AddDbContext<UsersDb>(options =>
                 options.UseNpgsql(
                             Configuration.GetConnectionString("Users"),
-                            b => b.MigrationsAssembly("gateway")));
+                            b => b.MigrationsAssembly("ids")));
 
             services.AddIdentity<IdsUser, IdentityRole>(options => 
                 {
@@ -89,13 +89,14 @@ namespace gateway
                 .AddResourceOwnerValidator<MapUsernameToEmail>()
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
                 .AddInMemoryApiResources(Configuration.GetSection("Apis"))
+                .AddInMemoryApiScopes(Configuration.GetSection("ApiScopes"))
                 .AddInMemoryClients(Configuration.GetSection("Clients"))
                 .AddOperationalStore(options => {
                     options.ConfigureDbContext = builder => 
                     {
                         builder.UseNpgsql(
                             Configuration.GetConnectionString("Grants"),
-                            b => b.MigrationsAssembly("gateway"));
+                            b => b.MigrationsAssembly("ids"));
 
                     };
                     options.EnableTokenCleanup = true;

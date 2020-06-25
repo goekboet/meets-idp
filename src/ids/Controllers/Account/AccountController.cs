@@ -197,7 +197,7 @@ namespace IdentityServer4.Quickstart.UI
                     var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
                     if (result.Succeeded)
                     {
-                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
+                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client?.ClientId));
 
                         if (context != null)
                         {
@@ -221,7 +221,7 @@ namespace IdentityServer4.Quickstart.UI
                         }
                     }
                 }
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Email, "invalid credentials", clientId: context?.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Email, "invalid credentials", clientId: context?.Client?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -330,9 +330,9 @@ namespace IdentityServer4.Quickstart.UI
                 }).ToList();
 
             var allowLocal = true;
-            if (context?.ClientId != null)
+            if (context?.Client?.ClientId != null)
             {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+                var client = await _clientStore.FindEnabledClientByIdAsync(context?.Client?.ClientId);
                 if (client != null)
                 {
                     allowLocal = client.EnableLocalLogin;
