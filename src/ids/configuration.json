@@ -43,7 +43,7 @@
           "PostLogoutRedirectUris": [
             "http://localhost:5070/signout-callback-oidc"
           ],
-          "EnableLocalLogin": false,
+          "EnableLocalLogin": true,
           "IdentityProviderRestrictions": [
             "Okta",
             "Github"

@@ -61,6 +61,11 @@ hr {
 .forminput {
   display: flex;
   flex-direction: column;
+  padding-bottom: 1em;
+}
+
+fieldset > div.forminput {
+  padding-bottom: 0;
 }
 
 .forminput span {
@@ -84,7 +89,7 @@ input[type=text], input[type=password], input[type=email] {
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
-  border-color: darkgreen;
+  border-color: chocolate;
   width: 100%;
   font-size: 1em;
   color: darkgreen;
@@ -97,7 +102,7 @@ input[type=checkbox] {
 }
 
 input:focus, button:focus, a:focus {
-  outline-color: darkgreen;
+  outline-color: chocolate;
 }
 
 .rememberme {
@@ -138,13 +143,13 @@ input:focus, button:focus, a:focus {
 }
 
 .heavy {
-  background-color: darkgreen;
-  color: lightgreen;
-  border-color: darkgreen;
+  background-color: chocolate;
+  color: blanchedalmond;
+  border-color: chocolate;
 }
 
 .light {
-  background-color: lightgreen;
-  color: darkgreen;
-  border-color: darkgreen;
+  background-color: blanchedalmond;
+  color: chocolate;
+  border-color: chocolate;
 }
