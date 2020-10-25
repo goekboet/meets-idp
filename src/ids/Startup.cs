@@ -16,6 +16,7 @@ using Ids.Features.EmailUsername;
 using gateway.Pki;
 using Microsoft.AspNetCore.Http;
 using Elastic.Apm.NetCoreAll;
+using IdentityServer4.Quickstart.UI;
 
 namespace gateway
 {
@@ -121,7 +122,7 @@ namespace gateway
                     opts.SaveTokens = true;
                 });
 
-
+            services.SetupRegister();
         }
 
         public void Configure(
