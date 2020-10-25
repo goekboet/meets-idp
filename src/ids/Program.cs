@@ -55,6 +55,7 @@ namespace gateway
                 .UseSerilog((context, configuration) =>
                     {
                         IdentityModelEventSource.ShowPII = true;
+                        configuration.ReadFrom.Configuration(context.Configuration);
                         var key = context.Configuration["Serilog:Configuration"];
                         SwitchLogger(key, configuration);
                     });

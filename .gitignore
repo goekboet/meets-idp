@@ -1,8 +1,10 @@
 **/bin
 **/obj
+**/node_modules
 **/appsettings.json
 **/keymaterial.pfx
 **/tempkey.rsa
 **/*.pem
 .fake
 .ionide
+**/oidc-client.*

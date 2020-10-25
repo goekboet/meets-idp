@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Ids.Features.EmailUsername;
 using gateway.Pki;
 using Microsoft.AspNetCore.Http;
+using Elastic.Apm.NetCoreAll;
 
 namespace gateway
 {
@@ -38,7 +39,7 @@ namespace gateway
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                     ForwardedHeaders.XForwardedProto;
-                
+
                 // Per default kestrel only forwards proxy-headers from localhost. You need to add
                 // ip-numbers into these lists or empty them to forward all.
                 options.KnownNetworks.Clear();
@@ -64,22 +65,15 @@ namespace gateway
                             Configuration.GetConnectionString("Users"),
                             b => b.MigrationsAssembly("ids")));
 
-            services.AddIdentity<IdsUser, IdentityRole>(options => 
+            services.AddIdentity<IdsUser, IdentityRole>(options =>
                 {
                     options.Password.RequireDigit = false;
                     options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false; 
+                    options.Password.RequireUppercase = false;
                     options.User.RequireUniqueEmail = true;
                 })
                 .AddEntityFrameworkStores<UsersDb>()
                 .AddDefaultTokenProviders();
-
-            services.ConfigureApplicationCookie(opts =>
-            {
-                opts.Cookie.Name = "sso";
-                opts.Cookie.IsEssential = true;
-                opts.Cookie.SameSite = SameSiteMode.Lax;
-            });
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -92,7 +86,7 @@ namespace gateway
                 .AddInMemoryApiScopes(Configuration.GetSection("ApiScopes"))
                 .AddInMemoryClients(Configuration.GetSection("Clients"))
                 .AddOperationalStore(options => {
-                    options.ConfigureDbContext = builder => 
+                    options.ConfigureDbContext = builder =>
                     {
                         builder.UseNpgsql(
                             Configuration.GetConnectionString("Grants"),
@@ -100,10 +94,16 @@ namespace gateway
 
                     };
                     options.EnableTokenCleanup = true;
+                })
+                .Services.ConfigureApplicationCookie(opts => {
+                    opts.Cookie.Name = "sso";
+                    opts.Cookie.IsEssential = true;
+                    opts.Cookie.SameSite = SameSiteMode.None;
+                    opts.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 });
 
             services.SetupKeyStore();
-            
+
             services.AddControllersWithViews();
 
             services.AddAuthentication()
@@ -113,7 +113,7 @@ namespace gateway
                     opts.Scope.Add("email");
                     opts.SaveTokens = true;
                 })
-                .AddGitHub("Github", opts => 
+                .AddGitHub("Github", opts =>
                 {
                     Configuration.Bind("Github", opts);
                     opts.Scope.Add("read:user");
@@ -121,19 +121,24 @@ namespace gateway
                     opts.SaveTokens = true;
                 });
 
-            
+
         }
 
         public void Configure(
             IApplicationBuilder app)
         {
-            app.UseForwardedHeaders();
+            if (!Configuration.GetValue<bool>("ElasticApm:OptOut"))
+            {
+                app.UseAllElasticApm(Configuration);
+            }
             
+            app.UseForwardedHeaders();
+
             if (Env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseStaticFiles();
             app.UseRouting();
 
