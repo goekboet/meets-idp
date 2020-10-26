@@ -1,0 +1,16 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Register</h1>
+    </div>
+    <div class="content light">
+        <form asp-controller="Register" asp-action="RequestEmailVerification" method="POST">
+            <h2>Email verified</h2>
+        </form>
+    </div>
+</div>

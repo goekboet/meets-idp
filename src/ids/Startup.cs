@@ -12,13 +12,14 @@ using Microsoft.AspNetCore.DataProtection;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Ids.Features.EmailUsername;
-using gateway.Pki;
 using Microsoft.AspNetCore.Http;
 using Elastic.Apm.NetCoreAll;
-using IdentityServer4.Quickstart.UI;
+using Ids.AspIdentity;
+using Ids.Pki;
+using Ids.ResetPassword;
+using Ids.Forgot;
 
-namespace gateway
+namespace Ids
 {
     public class Startup
     {
@@ -104,7 +105,7 @@ namespace gateway
                     opts.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 });
 
-            services.SetupKeyStore();
+            
 
             services.AddControllersWithViews();
 
@@ -123,6 +124,7 @@ namespace gateway
                     opts.SaveTokens = true;
                 });
 
+            services.SetupKeyStore();
             services.SetupRegister();
             services.SetupForgot();
         }

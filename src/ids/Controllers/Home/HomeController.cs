@@ -3,6 +3,7 @@
 
 
 using IdentityServer4.Services;
+using Ids;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

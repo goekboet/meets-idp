@@ -8,9 +8,9 @@
 
 using IdentityServer4.Models;
 using System.Collections.Generic;
-using Custom = Ids.Features.EmailUsername;
+using Custom = Ids.AspIdentity;
 
-namespace gateway
+namespace Ids
 {
     public static class Config
     {

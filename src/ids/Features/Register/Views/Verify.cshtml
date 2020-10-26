@@ -1,0 +1,28 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@namespace Ids.ResetPassword
+@model EmailVerificationCode
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Register</h1>
+    </div>
+    <div class="content light">
+        <h2>Activate account</h2>
+        <form asp-controller="Register" asp-action="VerifyCode" method="POST">
+            <input type="hidden" asp-for="UserId" />
+            <div class="forminput">
+                <label asp-for="Code" class="control-label"></label>
+                <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
+                <span asp-validation-for="Code"></span>
+            </div>
+            <div class="formbuttons">
+                <button class="heavy" name="register-submit" value="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

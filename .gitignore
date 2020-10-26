@@ -5,6 +5,7 @@
 **/keymaterial.pfx
 **/tempkey.rsa
 **/*.pem
+**/rotation
 .fake
 .ionide
 **/oidc-client.*

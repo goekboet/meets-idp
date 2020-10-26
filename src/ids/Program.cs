@@ -10,7 +10,7 @@ using Serilog;
 using Serilog.Formatting.Elasticsearch;
 using Microsoft.Extensions.Configuration;
 
-namespace gateway
+namespace Ids
 {
     public class Program
     {
