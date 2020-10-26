@@ -5,32 +5,32 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IdentityServer4.Quickstart.UI
 {
-    public class ActivateAccountInDb : IAccountActivation
+    public class AspIdentityResetPassword : IReset
     {
         private readonly UserManager<IdsUser> _userManager;
         private readonly SignInManager<IdsUser> _signInManager;
-        
-        public ActivateAccountInDb(
-            UserManager<IdsUser> userRecords,
-            SignInManager<IdsUser> signin
+
+        public AspIdentityResetPassword(
+            UserManager<IdsUser> userManager,
+            SignInManager<IdsUser> signinManager
         )
         {
-            _userManager = userRecords;
-            _signInManager = signin;
+            _userManager = userManager;
+            _signInManager = signinManager;
         }
 
-        public async Task<Result<Unit>> ActivateAccount(UnverifiedAccount a)
+        public async Task<Result<Unit>> Reset(VerifiedReset r)
         {
-            var u = await _userManager.FindByIdAsync(a.UserId);
+            var u = await _userManager.FindByIdAsync(r.UserId);
+
             if (u == null)
             {
-                return new Error<Unit>("User not found.");
+                return new Error<Unit>($"No user with id {r.UserId} on record");
             }
             else
             {
-                var activation = await _userManager.ConfirmEmailAsync(u, a.VerificationCode);
-
-                if (activation.Succeeded)
+                var reset = await _userManager.ResetPasswordAsync(u, r.Token, r.Password);
+                if (reset.Succeeded)
                 {
                     await _signInManager.SignInAsync(u, new AuthenticationProperties());
                     return new Ok<Unit>(new Unit());
@@ -38,7 +38,7 @@ namespace IdentityServer4.Quickstart.UI
                 else
                 {
                     await _signInManager.SignOutAsync();
-                    return activation.ToAppError<Unit>();
+                    return reset.ToAppError<Unit>();
                 }
             }
         }

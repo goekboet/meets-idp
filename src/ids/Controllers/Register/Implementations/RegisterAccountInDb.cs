@@ -41,7 +41,7 @@ namespace IdentityServer4.Quickstart.UI
                 }
                 else
                 {
-                    return registration.ToAppResult<UnverifiedAccount>();
+                    return registration.ToAppError<UnverifiedAccount>();
                 }             
             }
         }

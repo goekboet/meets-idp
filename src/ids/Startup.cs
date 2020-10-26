@@ -68,6 +68,7 @@ namespace gateway
 
             services.AddIdentity<IdsUser, IdentityRole>(options =>
                 {
+                    options.Password.RequiredLength = 8;
                     options.Password.RequireDigit = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
@@ -123,6 +124,7 @@ namespace gateway
                 });
 
             services.SetupRegister();
+            services.SetupForgot();
         }
 
         public void Configure(

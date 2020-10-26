@@ -5,7 +5,7 @@ namespace IdentityServer4.Quickstart.UI
 {
     public static class RegisterFunctions
     {
-        public static Result<T> ToAppResult<T>(
+        public static Result<T> ToAppError<T>(
             this IdentityResult r
         )
         {
