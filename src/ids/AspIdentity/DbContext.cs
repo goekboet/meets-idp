@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ids.AspIdentity
 {
-    public class IdsUser : IdentityUser
-    {
-    }
+    public class IdsUser : IdentityUser { }
     
     public class UsersDb : IdentityDbContext<IdsUser>
     {
