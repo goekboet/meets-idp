@@ -1,0 +1,33 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var version = typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.GetName().Version.ToString();
+}
+
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Authentication server</h1>
+    </div>
+    <div class="content light">
+        <h2>Features</h2>
+        <ul>
+            <li>
+                <h3>OpenId connect</h3>
+                <p>@Context.Request.Host acts as an oidc authentication server. The implementation is based on <a href="https://github.com/IdentityServer/IdentityServer4">Identity server 4</a> (version: @version). You can find the discover document <a href="~/.well-known/openid-configuration">here</a></p>
+            </li>
+            <li>
+                <h3>Password</h3>
+                <p>You can register an account <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="/">here</a>. You can then choose a password and protect your account using your email.</p>
+            </li>
+            <li>
+                <h3>Social login</h3>
+                <p>If you don't want to handle another password you can sign in via github.</p>
+            </li>
+            <li>
+                <h3>Single-sign-on</h3>
+                <p>Provide your credentials once and stay logged in at all apps using @Context.Request.Host as authentication server</p>
+            </li>
+        </ul>
+    </div>
+</div>
