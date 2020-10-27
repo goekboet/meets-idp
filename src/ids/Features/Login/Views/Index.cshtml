@@ -1,0 +1,34 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using Ids.Login
+@model LoginInput
+
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Login</h1>
+    </div>
+    <div class="content light">
+        <h2>Input username and password</h2>
+        <form asp-controller="Login" asp-action="VerifyCredentials" method="POST">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div class="forminput">
+                <label asp-for="Email" class="control-label"></label>
+                <input class="form-control" placeholder="Email" asp-for="Email" autofocus>
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div class="forminput">
+                <label asp-for="Password" class="control-label"></label>
+                <input class="form-control" placeholder="Password" asp-for="Password" >
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div class="formbuttons">
+                <partial name="_ValidationSummary" />
+                <button class="heavy" name="login-submit" value="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

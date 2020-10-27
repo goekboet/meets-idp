@@ -25,10 +25,6 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        public const string LoginIntent = "login";
-        public const string RegisterIntent = "register";
-        public const string CancelIntent = "cancel";
-
         private readonly UserManager<IdsUser> _userManager;
         private readonly SignInManager<IdsUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
@@ -54,91 +50,6 @@ namespace IdentityServer4.Quickstart.UI
             _events = events;
             _logger = logger;
         }
-
-        /// <summary>
-        /// Entry point into the login workflow
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> Login(string returnUrl)
-        {
-            // build a model so we know what to show on the login page
-            var vm = await BuildLoginViewModelAsync(returnUrl);
-
-            if (vm.IsExternalLoginOnly)
-            {
-                // we only have one option for logging in and it's an external provider
-                return RedirectToAction("Challenge", "External", new { provider = vm.ExternalLoginScheme, returnUrl });
-            }
-
-            return View(vm);
-        }
-
-        /// <summary>
-        /// Handle postback from username/password login
-        /// </summary>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(
-            LoginInputModel model,
-            string button)
-        {
-            // check if we are in the context of an authorization request
-            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-
-            // the user clicked the "cancel" button
-            if (button != LoginIntent)
-            {
-                if (context != null)
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-                else
-                {
-                    return Redirect("~/");
-                }
-            }
-
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: true);
-                    if (result.Succeeded)
-                    {
-                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client?.ClientId));
-
-                        if (context != null)
-                        {
-                            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                            return Redirect(model.ReturnUrl);
-                        }
-
-                        // request for a local page
-                        if (Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                        else if (string.IsNullOrEmpty(model.ReturnUrl))
-                        {
-                            return Redirect("~/");
-                        }
-                        else
-                        {
-                            // user might have clicked on a malicious link - should be logged
-                            throw new Exception("invalid return URL");
-                        }
-                    }
-                }
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Email, "invalid credentials", clientId: context?.Client?.ClientId));
-                ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
-            }
-
-            // something went wrong, show form with error
-            var vm = await BuildLoginViewModelAsync(model);
-            return View(vm);
-        }
-
 
         /// <summary>
         /// Show logout page
@@ -197,78 +108,6 @@ namespace IdentityServer4.Quickstart.UI
         public IActionResult AccessDenied()
         {
             return View();
-        }
-
-
-        /*****************************************/
-        /* helper APIs for the AccountController */
-        /*****************************************/
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
-        {
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
-            {
-                var local = context.IdP == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
-
-                // this is meant to short circuit the UI and only trigger the one external IdP
-                var vm = new LoginViewModel
-                {
-                    EnableLocalLogin = local,
-                    ReturnUrl = returnUrl,
-                    Email = context?.LoginHint,
-                };
-
-                if (!local)
-                {
-                    vm.ExternalProviders = new[] { new ExternalProvider { AuthenticationScheme = context.IdP } };
-                }
-
-                return vm;
-            }
-
-            var schemes = await _schemeProvider.GetAllSchemesAsync();
-
-            var providers = schemes
-                .Where(x => x.DisplayName != null ||
-                            (x.Name.Equals(AccountOptions.WindowsAuthenticationSchemeName, StringComparison.OrdinalIgnoreCase))
-                )
-                .Select(x => new ExternalProvider
-                {
-                    DisplayName = x.DisplayName,
-                    AuthenticationScheme = x.Name
-                }).ToList();
-
-            var allowLocal = true;
-            if (context?.Client?.ClientId != null)
-            {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context?.Client?.ClientId);
-                if (client != null)
-                {
-                    allowLocal = client.EnableLocalLogin;
-
-                    if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
-                    {
-                        providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
-                    }
-                }
-            }
-
-            return new LoginViewModel
-            {
-                AllowRememberLogin = AccountOptions.AllowRememberLogin,
-                EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
-                ReturnUrl = returnUrl,
-                Email = context?.LoginHint,
-                ExternalProviders = providers.ToArray()
-            };
-        }
-
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
-        {
-            var vm = await BuildLoginViewModelAsync(model.ReturnUrl);
-            vm.Email = model.Email;
-            vm.RememberLogin = model.RememberLogin;
-            return vm;
         }
 
         private async Task<LogoutViewModel> BuildLogoutViewModelAsync(string logoutId)

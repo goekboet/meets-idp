@@ -18,6 +18,7 @@ using Ids.AspIdentity;
 using Ids.Pki;
 using Ids.ResetPassword;
 using Ids.Forgot;
+using Ids.Login;
 
 namespace Ids
 {
@@ -81,6 +82,7 @@ namespace Ids
             var builder = services.AddIdentityServer(options =>
             {
                 Configuration.GetSection("IdentityServerOptions").Bind(options);
+                options.UserInteraction.LoginUrl = "/Login";
             })
                 .AddAspNetIdentity<IdsUser>()
                 .AddResourceOwnerValidator<MapUsernameToEmail>()
@@ -105,8 +107,6 @@ namespace Ids
                     opts.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 });
 
-            
-
             services.AddControllersWithViews();
 
             services.AddAuthentication()
@@ -127,6 +127,7 @@ namespace Ids
             services.SetupKeyStore();
             services.SetupRegister();
             services.SetupForgot();
+            services.SetupLogin();
         }
 
         public void Configure(
