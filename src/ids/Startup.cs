@@ -15,6 +15,7 @@ using Ids.Forgot;
 using Ids.Login;
 using Ids.Identityserver4;
 using Ids.Hosting;
+using Ids.Profile;
 
 namespace Ids
 {
@@ -44,6 +45,7 @@ namespace Ids
             services.SetupRegister();
             services.SetupForgot();
             services.SetupLogin();
+            services.SetupProfile();
         }
 
         public void Configure(
