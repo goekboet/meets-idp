@@ -6,6 +6,7 @@
 **/tempkey.rsa
 **/*.pem
 **/rotation
+**/elm-stuff
 .fake
 .ionide
 **/oidc-client.*
