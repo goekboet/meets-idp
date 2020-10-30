@@ -1,0 +1,28 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@namespace Ids.ChangeUsername
+@model VerifiedChangeUsernameInput
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="root-view">
+    <div class="content heavy">
+        <h1>Change email</h1>
+    </div>
+    <div class="content light">
+        <h2>Paste the change-email token</h2>
+        <form asp-controller="ChangeUsername" asp-action="Change" method="POST">
+            <div class="forminput">
+                <label asp-for="Code" class="control-label"></label>
+                <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
+                <span asp-validation-for="Code"></span>
+            </div>
+            <input type="hidden" asp-for="NewUsername" />
+            <div class="formbuttons">
+                <button class="heavy" name="register-submit" value="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

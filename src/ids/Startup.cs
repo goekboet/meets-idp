@@ -17,6 +17,7 @@ using Ids.Hosting;
 using Ids.Profile;
 using Ids.Register;
 using Ids.Unregister;
+using Ids.ChangeUsername;
 
 namespace Ids
 {
@@ -48,6 +49,7 @@ namespace Ids
             services.SetupForgot();
             services.SetupLogin();
             services.SetupProfile();
+            services.SetupChangeUsername();
         }
 
         public void Configure(
