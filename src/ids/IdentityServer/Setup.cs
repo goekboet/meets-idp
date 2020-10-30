@@ -36,6 +36,8 @@ namespace Ids.Identityserver4
                     options.EnableTokenCleanup = true;
                 })
                 .Services.ConfigureApplicationCookie(opts => {
+                    opts.LoginPath = "/Login";
+                    opts.LogoutPath = "/Logout";
                     opts.Cookie.Name = "sso";
                     opts.Cookie.IsEssential = true;
                     opts.Cookie.SameSite = SameSiteMode.None;

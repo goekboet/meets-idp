@@ -54,6 +54,7 @@ namespace Ids.Profile
         }
 
         [Route("/api/profile/password")]
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> AddPassword(PasswordJson newPwd)
         {
@@ -76,6 +77,7 @@ namespace Ids.Profile
         }
 
         [Route("/api/profile/name")]
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> SetName(NameJson n)
         {
@@ -97,6 +99,7 @@ namespace Ids.Profile
         }
 
         [Route("/api/profile/changePassword")]
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> ChangePassword(
             ChangePasswordJson p

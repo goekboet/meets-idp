@@ -35,6 +35,8 @@ namespace Ids.ResetPassword
             return View(v("Index"), new RegistrationRequest());
         }
 
+        string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestEmailVerification(
@@ -46,11 +48,9 @@ namespace Ids.ResetPassword
                 var registration = await Registration.RegisterAccount(new UnregisteredAccount(r.Email));
                 if (registration is Ok<UnverifiedAccount> ok)
                 {
-                    Response.OnCompleted(async () =>
-                    {
-                        await Code.Send(ok.Value);
-                    });
-                    return RedirectToAction("Verify", "Register", new { userId = ok.Value.UserId });
+                    var c = await Code.Send(HttpContext.Response, ok.Value);
+                    
+                    return RedirectToAction("Verify", "Register", new { userId = ok.Value.UserId, code = CodeFromResult(c) });
                 }
                 else
                 {
@@ -72,10 +72,11 @@ namespace Ids.ResetPassword
 
         [HttpGet, HttpHead]
         public IActionResult Verify(
-            string userId
+            string userId,
+            string code
         )
         {
-            return View(v("Verify"), new EmailVerificationCode() { UserId = userId });
+            return View(v("Verify"), new EmailVerificationCode() { UserId = userId, Code = code });
         }
 
         [HttpPost]

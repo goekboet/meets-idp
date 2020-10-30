@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Ids.ResetPassword
@@ -13,11 +14,17 @@ namespace Ids.ResetPassword
             _logger = logs;
         }
 
-        public Task<Result<Unit>> Send(UnverifiedAccount acct)
+        public Task<Result<string>> Send(
+            HttpResponse r,
+            UnverifiedAccount acct)
         {
-            _logger.LogInformation($"{acct.Email} {acct.VerificationCode}");
-
-            return Task.FromResult<Result<Unit>>(new Ok<Unit>(new Unit()));
+            r.OnCompleted(() => 
+            {
+                _logger.LogInformation($"{acct.UserId} {acct.VerificationCode}");
+                return Task.CompletedTask;
+            });
+            
+            return Task.FromResult<Result<string>>(new Ok<string>(acct.VerificationCode));
         }
     }
 }

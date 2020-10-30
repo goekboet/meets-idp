@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Ids.ResetPassword
 {
@@ -65,7 +66,8 @@ namespace Ids.ResetPassword
 
     public interface ICodeDistribution
     {
-        public Task<Result<Unit>> Send(
+        public Task<Result<string>> Send(
+            HttpResponse r,
             UnverifiedAccount a);
     }
 }

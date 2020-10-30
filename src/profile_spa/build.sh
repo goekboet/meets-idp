@@ -1,1 +1,1 @@
-elm make src/Main.elm --output=../ids/wwwroot/app.js
+elm make src/Main.elm --debug --output=../ids/wwwroot/app.js
