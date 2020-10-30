@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ids.ResetPassword
+namespace Ids.Register
 {
     public static class SetupRegisterExtension
     {

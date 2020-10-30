@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Ids.Register
+namespace Ids.Unregister
 {
     public class PrintCodeToLogs : ICodeDistribution
     {
@@ -16,15 +16,15 @@ namespace Ids.Register
 
         public Task<Result<string>> Send(
             HttpResponse r,
-            UnverifiedAccount acct)
+            ActiveAccount acct)
         {
             r.OnCompleted(() => 
             {
-                _logger.LogInformation($"{acct.UserId} {acct.VerificationCode}");
+                _logger.LogInformation($"{acct.UserId} {acct.Code}");
                 return Task.CompletedTask;
             });
             
-            return Task.FromResult<Result<string>>(new Ok<string>(acct.VerificationCode));
+            return Task.FromResult<Result<string>>(new Ok<string>(acct.Code));
         }
     }
 }

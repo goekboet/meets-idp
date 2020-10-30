@@ -3,36 +3,33 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Ids.Register
+namespace Ids.Unregister
 {
     [SecurityHeaders]
     [AllowAnonymous]
-    public class RegisterController : Controller
+    public class UnregisterController : Controller
     {
-        private IAccountRegistration Registration { get; }
-        private IAccountActivation Activation { get; }
+        private IAccountDeletion Account { get; }
         private ICodeDistribution Code { get; }
+        private ILogger<UnregisterController> Log { get; }
 
-        private ILogger<RegisterController> Log { get; }
-        public RegisterController(
-            IAccountRegistration registration,
-            IAccountActivation activation,
+        public UnregisterController(
+            IAccountDeletion account,
             ICodeDistribution codeDistribution,
-            ILogger<RegisterController> log
+            ILogger<UnregisterController> log
         )
         {
-            Registration = registration;
-            Activation = activation;
+            Account = account;
             Code = codeDistribution;
             Log = log;
         }
 
-        string v(string name) => $"~/Features/Register/Views/{name}.cshtml";
+        string v(string name) => $"~/Features/Unregister/Views/{name}.cshtml";
 
         [HttpGet, HttpHead]
         public IActionResult Index()
         {
-            return View(v("Index"), new RegistrationRequest());
+            return View(v("Index"), new UnregisterRequest());
         }
 
         string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
@@ -40,21 +37,21 @@ namespace Ids.Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestEmailVerification(
-            RegistrationRequest r
+            UnregisterRequest r
         )
         {
             if (ModelState.IsValid)
             {
-                var registration = await Registration.RegisterAccount(new UnregisteredAccount(r.Email));
-                if (registration is Ok<UnverifiedAccount> ok)
+                var verification = await Account.Verify(new UnverifiedAccount(r.Email));
+                if (verification is Ok<ActiveAccount> ok)
                 {
                     var c = await Code.Send(HttpContext.Response, ok.Value);
                     
-                    return RedirectToAction("Verify", "Register", new { userId = ok.Value.UserId, code = CodeFromResult(c) });
+                    return RedirectToAction("Verify", "Unregister", new { userId = ok.Value.UserId, code = CodeFromResult(c) });
                 }
                 else
                 {
-                    if (registration is Error<UnverifiedAccount> err)
+                    if (verification is Error<ActiveAccount> err)
                     {
                         Log.LogError(err.Description);
                     }
@@ -81,16 +78,16 @@ namespace Ids.Register
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyCode(
+        public async Task<IActionResult> Delete(
             EmailVerificationCode r
         )
         {
             if (ModelState.IsValid)
             {
-                var activation = await Activation.ActivateAccount(new UnverifiedAccount("", r.UserId, r.Code));
+                var activation = await Account.Delete(new ActiveAccount(r.UserId, "", r.Code));
                 if (activation is Ok<Unit> ok)
                 {
-                    return RedirectToAction("EmailVerified");
+                    return RedirectToAction("AccountDeleted");
                 }
                 else
                 {
@@ -99,7 +96,7 @@ namespace Ids.Register
                         Log.LogError(err.Description);
                     }
 
-                    return RedirectToAction("EmailVerificationFailed");
+                    return RedirectToAction("AccountDeletionFailed");
                 }
 
             }
@@ -112,15 +109,15 @@ namespace Ids.Register
 
         [HttpGet, HttpHead]
         [Authorize]
-        public IActionResult EmailVerified()
+        public IActionResult AccountDeleted()
         {
-            return View(v("EmailVerified"));
+            return View(v("AccountDeleted"));
         }
 
         [HttpGet, HttpHead]
-        public IActionResult EmailVerificationFailed()
+        public IActionResult AccountDeletionFailed()
         {
-            return View(v("EmailVerificationFailed"));
+            return View(v("AccountDeletionFailed"));
         }
     }
 }

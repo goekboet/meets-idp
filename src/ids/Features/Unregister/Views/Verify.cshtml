@@ -1,6 +1,6 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@namespace Ids.Register
+@namespace Ids.Unregister
 @model EmailVerificationCode
 
 @{
@@ -9,11 +9,11 @@
 
 <div class="root-view">
     <div class="content heavy">
-        <h1>Register</h1>
+        <h1>Delete your account</h1>
     </div>
     <div class="content light">
-        <h2>Activate account</h2>
-        <form asp-controller="Register" asp-action="VerifyCode" method="POST">
+        <h2>Verify</h2>
+        <form asp-controller="Unregister" asp-action="Delete" method="POST">
             <input type="hidden" asp-for="UserId" />
             <div class="forminput">
                 <label asp-for="Code" class="control-label"></label>
@@ -21,6 +21,7 @@
                 <span asp-validation-for="Code"></span>
             </div>
             <div class="formbuttons">
+                <partial name="_ValidationSummary" />
                 <button class="heavy" name="register-submit" value="submit">Submit</button>
             </div>
         </form>

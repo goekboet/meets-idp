@@ -3,7 +3,7 @@ using Ids.AspIdentity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
-namespace Ids.ResetPassword
+namespace Ids.Register
 {
     public class ActivateAccountInDb : IAccountActivation
     {

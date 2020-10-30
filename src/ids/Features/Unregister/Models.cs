@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Ids.Register
+namespace Ids.Unregister
 {
-    public class RegistrationRequest
+    public class UnregisterRequest
     {
         [Required]
         [EmailAddress]
@@ -26,49 +25,45 @@ namespace Ids.Register
     public class UnverifiedAccount
     {
         public UnverifiedAccount(
-            string email,
-            string userId,
-            string code
+            string email
         )
         {
             Email = email;
-            UserId = userId;
-            VerificationCode = code;
         }
 
         public string Email { get; }
-        public string UserId { get; }
-        public string VerificationCode { get; }
     }
 
-    public class UnregisteredAccount
+    public class ActiveAccount
     {
-        public UnregisteredAccount(string email)
+        public ActiveAccount(
+            string userId,
+            string email,
+            string code)
         {
+            UserId = userId;
             Email = email;
+            Code = code;
         }
 
+        public string UserId { get; }
         public string Email { get; }
+        public string Code { get; }
     }
 
-
-
-    public interface IAccountRegistration
+    public interface IAccountDeletion
     {
-        public Task<Result<UnverifiedAccount>> RegisterAccount(
-            UnregisteredAccount a);
-    }
-
-    public interface IAccountActivation
-    {
-        public Task<Result<Unit>> ActivateAccount(
+        public Task<Result<ActiveAccount>> Verify(
             UnverifiedAccount a);
+
+        public Task<Result<Unit>> Delete(
+            ActiveAccount a);
     }
 
     public interface ICodeDistribution
     {
         public Task<Result<string>> Send(
             HttpResponse r,
-            UnverifiedAccount a);
+            ActiveAccount a);
     }
 }

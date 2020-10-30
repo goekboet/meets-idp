@@ -5,6 +5,7 @@ namespace Ids.Forgot
 {
     public class ResetInput
     {
+        [Required]
         [EmailAddress]
         [MaxLength(256)]
         public string Email { get; set; }
@@ -15,6 +16,7 @@ namespace Ids.Forgot
         [Required]
         [Guid]
         public string UserId { get; set; }
+        
         [Required]
         [MaxLength(512)]
         public string Code { get; set; }

@@ -10,12 +10,13 @@ using Elastic.Apm.NetCoreAll;
 
 using Ids.AspIdentity;
 using Ids.Pki;
-using Ids.ResetPassword;
 using Ids.Forgot;
 using Ids.Login;
 using Ids.Identityserver4;
 using Ids.Hosting;
 using Ids.Profile;
+using Ids.Register;
+using Ids.Unregister;
 
 namespace Ids
 {
@@ -43,6 +44,7 @@ namespace Ids
             services.AddControllersWithViews();
             services.SetupKeyStore();
             services.SetupRegister();
+            services.SetupUnregister();
             services.SetupForgot();
             services.SetupLogin();
             services.SetupProfile();

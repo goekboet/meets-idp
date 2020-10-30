@@ -14,15 +14,9 @@ namespace Ids.Login
         [MinLength(8)]
         [MaxLength(64)]
         public string Password { get; set; }
-        public bool RememberLogin { get; set; }
         
         [MaxLength(4096)]
         public string ReturnUrl { get; set; }
-    }
-
-    public static class LoginConstants
-    {
-        public const string InvalidCredentials = "invalid_credentials";
     }
     
     public interface IVerifyCredentials
