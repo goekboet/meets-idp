@@ -18,6 +18,14 @@ namespace Ids.Login
             _signInManager = signInManager;
         }
 
+        private string ToAppError(SignInResult r)
+        {
+            if (r.IsLockedOut)
+                return "LockedOut";
+            else
+                return "InvalidCreds";
+        }
+
         public async Task<Result<Unit>> Verify(string userName, string password)
         {
             var login = await _signInManager.PasswordSignInAsync(userName, password, false, true);
@@ -28,7 +36,7 @@ namespace Ids.Login
             else
             {
                 await _signInManager.SignOutAsync();
-                return new Error<Unit>("Login failed");
+                return new Error<Unit>(ToAppError(login));
             }
         }
     }

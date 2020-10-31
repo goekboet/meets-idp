@@ -12,17 +12,19 @@
         <h1>Login</h1>
     </div>
     <div class="content light">
-        <h2>Input username and password</h2>
+        <h2>Username and password</h2>
         <form asp-controller="Login" asp-action="VerifyCredentials" method="POST">
             <input type="hidden" asp-for="ReturnUrl" />
+            <p>Need to register an account? <a href="/register">Click here.</a></p>
             <div class="forminput">
                 <label asp-for="Email" class="control-label"></label>
                 <input class="form-control" placeholder="Email" asp-for="Email" autofocus>
                 <span asp-validation-for="Email"></span>
             </div>
+            <p>Forgot your password? <a href="/forgot">Click here.</a></p>
             <div class="forminput">
                 <label asp-for="Password" class="control-label"></label>
-                <input class="form-control" placeholder="Password" asp-for="Password" >
+                <input type="password" class="form-control" placeholder="Password" asp-for="Password" >
                 <span asp-validation-for="Password"></span>
             </div>
             <div class="formbuttons">

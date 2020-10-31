@@ -53,7 +53,7 @@ namespace Ids.Forgot
                     {
                         _logger.LogError(errToken.Description);
                     }
-                    ModelState.AddModelError("", "Technical error. Are you sure you have an account with this email? Please try again later.");
+                    ModelState.AddModelError("Email", "Not accepted. Are you sure it's the right one?");
 
                     return View(v("Index"), r);
                 }     
@@ -87,8 +87,9 @@ namespace Ids.Forgot
                     {
                         _logger.LogError(resetErr.Description);
                     }
+                    ModelState.AddModelError("Code", "Not accepted. Please double-check.");
 
-                    return RedirectToAction("VerificationFailed");
+                    return View(v("Token"), c);
                 }        
             }
             else
@@ -102,12 +103,6 @@ namespace Ids.Forgot
         public IActionResult Verified()
         {
             return View(v("Verified"));
-        }
-
-        [HttpGet, HttpHead]
-        public IActionResult VerificationFailed()
-        {
-            return View(v("VerificationFailed"));
         }
     }
 }

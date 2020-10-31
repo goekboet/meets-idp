@@ -95,8 +95,9 @@ namespace Ids.Unregister
                     {
                         Log.LogError(err.Description);
                     }
+                    ModelState.AddModelError("Code", "Not acepted. Please double-check.");
 
-                    return RedirectToAction("AccountDeletionFailed");
+                    return View(v("Verify"), r);
                 }
 
             }

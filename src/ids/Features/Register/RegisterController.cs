@@ -98,8 +98,9 @@ namespace Ids.Register
                     {
                         Log.LogError(err.Description);
                     }
+                    ModelState.AddModelError("Code", "Not accepted. Please double-check.");
 
-                    return RedirectToAction("EmailVerificationFailed");
+                    return View(v("Verify"), r);
                 }
 
             }

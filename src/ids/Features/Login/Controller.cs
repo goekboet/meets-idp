@@ -41,12 +41,18 @@ namespace Ids.Login
 
                     return Redirect(oidcContext != null ? i.ReturnUrl : "/");
                 }
-                else
+                else if (login is Error<Unit> verifyErr)
                 {
-                    ModelState.AddModelError("", "Login failed.");
-                    
-                    return View(v("Index"), i);
-                }           
+                    if (verifyErr.Description == "InvalidCreds")
+                    {
+                        ModelState.AddModelError("Email", "Login failed. Please double-check.");
+                    }
+                    else if (verifyErr.Description == "LockedOut")
+                    {
+                        ModelState.AddModelError("Password", "Too many attempts. Account locked for a short time.");
+                    }
+                }   
+                return View(v("Index"), i);        
             }
             else
             {

@@ -12,22 +12,24 @@
         <h1>Forgot my password</h1>
     </div>
     <div class="content light">
-        <h2>Choose a new password</h2>
+        <h2>Check your emails</h2>
         <form asp-controller="Forgot" asp-action="Verify" method="POST">
             <input type="hidden" asp-for="UserId" />
+            <p>Paste the token from the e-mail we sent you.</p>
             <div class="forminput">
                 <label asp-for="Code" class="control-label"></label>
                 <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
                 <span asp-validation-for="Code"></span>
             </div>
+            <p>Choose a new password.</p>
             <div class="forminput">
                 <label asp-for="Password" class="control-label"></label>
-                <input class="form-control" placeholder="Password" asp-for="Password" autofocus>
+                <input type="password" class="form-control" placeholder="Password" asp-for="Password" autofocus>
                 <span asp-validation-for="Password"></span>
             </div>
             <div class="forminput">
                 <label asp-for="PasswordRepeated" class="control-label"></label>
-                <input class="form-control" placeholder="PasswordRepeated" asp-for="PasswordRepeated" autofocus>
+                <input type="password" class="form-control" placeholder="PasswordRepeated" asp-for="PasswordRepeated" autofocus>
                 <span asp-validation-for="PasswordRepeated"></span>
             </div>
             <div class="formbuttons">

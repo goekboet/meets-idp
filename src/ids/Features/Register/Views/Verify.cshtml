@@ -12,7 +12,8 @@
         <h1>Register</h1>
     </div>
     <div class="content light">
-        <h2>Activate account</h2>
+        <h2>Paste the token we sent you</h2>
+        <p>In the welcome email we sent you there is a token. Paste it in the input below and submit to activate your account.</p>
         <form asp-controller="Register" asp-action="VerifyCode" method="POST">
             <input type="hidden" asp-for="UserId" />
             <div class="forminput">
