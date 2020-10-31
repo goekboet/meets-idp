@@ -20,7 +20,7 @@ namespace Ids.Unregister
         {
             r.OnCompleted(() => 
             {
-                _logger.LogInformation($"{acct.UserId} {acct.Code}");
+                _logger.LogInformation($"{acct.Email} {acct.Code}");
                 return Task.CompletedTask;
             });
             

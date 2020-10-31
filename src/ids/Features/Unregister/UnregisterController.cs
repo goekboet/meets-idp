@@ -27,9 +27,9 @@ namespace Ids.Unregister
         string v(string name) => $"~/Features/Unregister/Views/{name}.cshtml";
 
         [HttpGet, HttpHead]
-        public IActionResult Index()
+        public IActionResult Index(string returnUrl)
         {
-            return View(v("Index"), new UnregisterRequest());
+            return View(v("Index"), new OidcLogin { ReturnUrl = returnUrl });
         }
 
         string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
@@ -37,17 +37,17 @@ namespace Ids.Unregister
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RequestEmailVerification(
-            UnregisterRequest r
+            OidcLogin login
         )
         {
             if (ModelState.IsValid)
             {
-                var verification = await Account.Verify(new UnverifiedAccount(r.Email));
+                var verification = await Account.Verify(User);
                 if (verification is Ok<ActiveAccount> ok)
                 {
                     var c = await Code.Send(HttpContext.Response, ok.Value);
                     
-                    return RedirectToAction("Verify", "Unregister", new { userId = ok.Value.UserId, code = CodeFromResult(c) });
+                    return RedirectToAction("Verify", "Unregister", new { code = CodeFromResult(c) });
                 }
                 else
                 {
@@ -57,12 +57,12 @@ namespace Ids.Unregister
                     }
 
                     ModelState.AddModelError("", "Technical error. Please try again later.");
-                    return View(v("Index"), r);
+                    return View(v("Index"), login);
                 }
             }
             else
             {
-                return View(v("Index"), r);
+                return View(v("Index"), login);
             }
 
         }
@@ -73,7 +73,7 @@ namespace Ids.Unregister
             string code
         )
         {
-            return View(v("Verify"), new EmailVerificationCode() { UserId = userId, Code = code });
+            return View(v("Verify"), new EmailVerificationCode() { Code = code });
         }
 
         [HttpPost]
@@ -84,7 +84,7 @@ namespace Ids.Unregister
         {
             if (ModelState.IsValid)
             {
-                var activation = await Account.Delete(new ActiveAccount(r.UserId, "", r.Code));
+                var activation = await Account.Delete(User, r.Code);
                 if (activation is Ok<Unit> ok)
                 {
                     return RedirectToAction("AccountDeleted");

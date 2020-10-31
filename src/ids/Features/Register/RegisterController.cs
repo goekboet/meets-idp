@@ -30,7 +30,7 @@ namespace Ids.Register
         string v(string name) => $"~/Features/Register/Views/{name}.cshtml";
 
         [HttpGet, HttpHead]
-        public IActionResult Index()
+        public IActionResult Index(string returnUrl)
         {
             return View(v("Index"), new RegistrationRequest());
         }
@@ -50,7 +50,13 @@ namespace Ids.Register
                 {
                     var c = await Code.Send(HttpContext.Response, ok.Value);
                     
-                    return RedirectToAction("Verify", "Register", new { userId = ok.Value.UserId, code = CodeFromResult(c) });
+                    return RedirectToAction("Verify", "Register", 
+                        new 
+                        { 
+                            userId = ok.Value.UserId, 
+                            code = CodeFromResult(c),
+                            returnUrl = r.ReturnUrl
+                        });
                 }
                 else
                 {
@@ -59,7 +65,7 @@ namespace Ids.Register
                         Log.LogError(err.Description);
                     }
 
-                    ModelState.AddModelError("", "Technical error. Please try again later.");
+                    ModelState.AddModelError("Email", "Not accepted. This email might be taken.");
                     return View(v("Index"), r);
                 }
             }
@@ -73,10 +79,17 @@ namespace Ids.Register
         [HttpGet, HttpHead]
         public IActionResult Verify(
             string userId,
-            string code
+            string code,
+            string returnUrl
         )
         {
-            return View(v("Verify"), new EmailVerificationCode() { UserId = userId, Code = code });
+            return View(v("Verify"), 
+            new EmailVerificationCode() 
+            { 
+                UserId = userId, 
+                Code = code,
+                ReturnUrl = returnUrl
+            });
         }
 
         [HttpPost]
@@ -90,7 +103,7 @@ namespace Ids.Register
                 var activation = await Activation.ActivateAccount(new UnverifiedAccount("", r.UserId, r.Code));
                 if (activation is Ok<Unit> ok)
                 {
-                    return RedirectToAction("EmailVerified");
+                    return RedirectToAction("Index", "ProfileSpa", new { returnUrl = r.ReturnUrl });
                 }
                 else
                 {
@@ -109,19 +122,6 @@ namespace Ids.Register
                 return View(v("Verify"), r);
             }
 
-        }
-
-        [HttpGet, HttpHead]
-        [Authorize]
-        public IActionResult EmailVerified()
-        {
-            return View(v("EmailVerified"));
-        }
-
-        [HttpGet, HttpHead]
-        public IActionResult EmailVerificationFailed()
-        {
-            return View(v("EmailVerificationFailed"));
         }
     }
 }

@@ -1,5 +1,8 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
+@using Ids.Profile
+@model SpaFlags;
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -10,9 +13,17 @@
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <script src="app.js"></script>
+    <script src="profile_spa/app.js"></script>
 </head>
 <body>
-  <script>var app = Elm.Main.init({ flags: { antiCsrf: '@Xsrf.GetAndStoreTokens(Context).RequestToken'}});</script>
+  <script
+    id="profile_spa"
+    src="profile_spa/index.js"
+    data-anticsrf="@Xsrf.GetAndStoreTokens(Context).RequestToken"
+    data-oidcLoginId="@Model.OidcLoginId"
+    data-oidcLoginName="@Model.OidcLoginName">
+
+  </script>
+  @* <script>var app = Elm.Main.init({ flags: { antiCsrf: '@Xsrf.GetAndStoreTokens(Context).RequestToken', returnUrl: '@Model.ReturnUrl'}});</script> *@
 </body>
 </html>

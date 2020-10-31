@@ -16,6 +16,7 @@
         <p>In the welcome email we sent you there is a token. Paste it in the input below and submit to activate your account.</p>
         <form asp-controller="Register" asp-action="VerifyCode" method="POST">
             <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="ReturnUrl" />
             <div class="forminput">
                 <label asp-for="Code" class="control-label"></label>
                 <input class="form-control" placeholder="Code" asp-for="Code" autofocus>

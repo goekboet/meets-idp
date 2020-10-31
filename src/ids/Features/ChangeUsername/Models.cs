@@ -11,6 +11,9 @@ namespace Ids.ChangeUsername
         [EmailAddress]
         [MaxLength(256)]
         public string NewUsername { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class VerifiedChangeUsernameInput
@@ -23,6 +26,9 @@ namespace Ids.ChangeUsername
         [EmailAddress]
         [MaxLength(256)]
         public string NewUsername { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class ResetToken

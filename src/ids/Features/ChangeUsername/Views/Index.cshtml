@@ -21,6 +21,9 @@
             </div>
             <div class="formbuttons">
                 <partial name="_ValidationSummary" />
+                <a asp-controller="ProfileSpa"
+                   asp-action="Index"
+                   asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
                 <button class="heavy" name="forgot-submit" value="submit">Submit</button>
             </div>
         </form>

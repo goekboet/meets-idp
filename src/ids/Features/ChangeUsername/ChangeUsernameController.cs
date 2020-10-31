@@ -32,9 +32,9 @@ namespace Ids.ChangeUsername
         string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
 
         [HttpGet, HttpHead]
-        public IActionResult Index()
+        public IActionResult Index(string returnUrl)
         {
-            return View(v("Index"), new ChangeUsernameInput());
+            return View(v("Index"), new ChangeUsernameInput { ReturnUrl = returnUrl} );
         }
 
         [HttpPost]
@@ -47,7 +47,13 @@ namespace Ids.ChangeUsername
                 if (token is Ok<ResetToken> okToken)
                 {
                     var t = await _exchange.Exchange(Response, okToken.Value);
-                    return RedirectToAction("Token", new { userId = okToken.Value.UserId, code = CodeFromResult(t), newEmail = r.NewUsername });
+                    return RedirectToAction("Token", 
+                    new 
+                    { 
+                        code = CodeFromResult(t), 
+                        newEmail = r.NewUsername,
+                        returnUrl = r.ReturnUrl
+                    });
                 }
                 else
                 {
@@ -69,9 +75,16 @@ namespace Ids.ChangeUsername
         [HttpGet, HttpHead]
         public IActionResult Token( 
             string code,
-            string newEmail)
+            string newEmail,
+            string returnUrl)
         {
-            return View(v("Token"), new VerifiedChangeUsernameInput { Code = code, NewUsername = newEmail });
+            return View(v("Token"), 
+            new VerifiedChangeUsernameInput 
+            { 
+                Code = code, 
+                NewUsername = newEmail,
+                ReturnUrl = returnUrl
+            });
         }
 
         [HttpPost]
@@ -83,7 +96,7 @@ namespace Ids.ChangeUsername
                 var change = await _username.Change(User, new VerifiedChangeUsername(c.Code, c.NewUsername));
                 if (change is Ok<Unit> changeOk)
                 {
-                    return RedirectToAction("UsernameChanged");
+                    return RedirectToAction("Index", "ProfileSpa", new { returnUrl = c.ReturnUrl });
                 }
                 else
                 {
@@ -100,12 +113,6 @@ namespace Ids.ChangeUsername
             {
                 return View(v("Token"), c);
             }
-        }
-
-        [HttpGet, HttpHead]
-        public IActionResult UsernameChanged()
-        {
-            return View(v("UsernameChanged"));
         }
     }
 }

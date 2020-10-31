@@ -1,26 +1,26 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@namespace Ids.Unregister
-@model UnregisterRequest
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@namespace Ids.Unregister
+@model OidcLogin
 
 <div class="root-view">
     <div class="content heavy">
         <h1>Delete your account</h1>
     </div>
     <div class="content light">
-        <h2>What's your email?</h2>
+        <h2>Are you sure?</h2>
         <form asp-controller="Unregister" asp-action="RequestEmailVerification" method="POST">
-            <div class="forminput">
-                <label asp-for="Email" class="control-label"></label>
-                <input type="text" class="form-control" placeholder="Email" asp-for="Email" autofocus>
-                <span asp-validation-for="Email"></span>
-            </div>
+            <p>If you really want to delete your account please confirm below. We will email you further instructions on how to proceed.</p>
             <div class="formbuttons">
                 <partial name="_ValidationSummary" />
-                <button class="heavy" name="register-submit" value="submit">Submit</button>
+                <a asp-controller="ProfileSpa"
+                   asp-action="Index"
+                   asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
+                <button class="heavy" name="register-submit" value="submit">Confirm</button>
             </div>
         </form>
     </div>

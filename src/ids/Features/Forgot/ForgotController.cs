@@ -30,9 +30,9 @@ namespace Ids.Forgot
         }
 
         [HttpGet, HttpHead]
-        public IActionResult Index()
+        public IActionResult Index(string returnUrl)
         {
-            return View(v("Index"), new ResetInput());
+            return View(v("Index"), new ResetInput { ReturnUrl = returnUrl } );
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace Ids.Forgot
                 if (token is Ok<ResetToken> okToken)
                 {
                     await _exchange.Exchange(okToken.Value);
-                    return RedirectToAction("Token", new { userId = okToken.Value.UserId });
+                    return RedirectToAction("Token", new { userId = okToken.Value.UserId, returnUrl = r.ReturnUrl });
                 }
                 else
                 {
@@ -65,9 +65,14 @@ namespace Ids.Forgot
         }
 
         [HttpGet, HttpHead]
-        public IActionResult Token(string userId)
+        public IActionResult Token(string userId, string returnUrl)
         {
-            return View(v("Token"), new VerifiedResetInput { UserId = userId });
+            return View(v("Token"), 
+            new VerifiedResetInput 
+            { 
+                UserId = userId,
+                ReturnUrl = returnUrl
+            });
         }
 
         [HttpPost]
@@ -79,7 +84,7 @@ namespace Ids.Forgot
                 var reset = await _reset.Reset(new VerifiedReset(c.UserId, c.Code, c.Password));
                 if (reset is Ok<Unit> resetOk)
                 {
-                    return RedirectToAction("Verified");
+                    return RedirectToAction("Index", "ProfileSpa", new { returnUrl = c.ReturnUrl });
                 }
                 else
                 {
@@ -96,13 +101,6 @@ namespace Ids.Forgot
             {
                 return View(v("Token"), c);
             }
-        }
-
-        [Authorize]
-        [HttpGet, HttpHead]
-        public IActionResult Verified()
-        {
-            return View(v("Verified"));
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Ids.AspIdentity;
 using Microsoft.AspNetCore.Identity;
@@ -18,16 +19,18 @@ namespace Ids.Unregister
             _signInManager = signInManager;
         }
 
-        public async Task<Result<Unit>> Delete(ActiveAccount a)
+        public async Task<Result<Unit>> Delete(
+            ClaimsPrincipal p,
+            string token)
         {
-            var user = await _userManager.FindByIdAsync(a.UserId);
+            var user = await _userManager.GetUserAsync(p);
             if (user == null)
             {
-                return new Error<Unit>($"No user with id {a.UserId} on record.");
+                return new Error<Unit>($"Principal not on record.");
             }
             else
             {
-                var verified = await _userManager.VerifyUserTokenAsync(user, "Default", "unregister", a.Code);
+                var verified = await _userManager.VerifyUserTokenAsync(user, "Default", "unregister", token);
                 if (verified)
                 {
                     var unregistration = await _userManager.DeleteAsync(user);
@@ -52,18 +55,18 @@ namespace Ids.Unregister
         }
 
         public async Task<Result<ActiveAccount>> Verify(
-            UnverifiedAccount a)
+            ClaimsPrincipal p)
         {
-            var user = await _userManager.FindByNameAsync(a.Email);
+            var user = await _userManager.GetUserAsync(p);
             if (user == null)
             {
-                return new Error<ActiveAccount>($"No user with username {a.Email} on record.");
+                return new Error<ActiveAccount>($"Principal not on record.");
             }
             else
             {
                 var code = await _userManager.GenerateUserTokenAsync(user, "Default", "unregister");
 
-                return new Ok<ActiveAccount>(new ActiveAccount(user.Id, user.Email, code));
+                return new Ok<ActiveAccount>(new ActiveAccount(user.Email, code));
             }
         }
     }

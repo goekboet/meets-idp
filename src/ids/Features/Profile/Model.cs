@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 
 namespace Ids.Profile
 {
+    public class SpaFlags
+    {
+        public string OidcLoginId { get; set; }
+        public string OidcLoginName { get; set; }
+    }
     public class ProfileJson
     {
         public string Name { get; set; }

@@ -17,8 +17,30 @@ type ApiResponse a =
     | Errored
     | Received a
 
+type alias OidcLogin =
+    { id : String
+    , name : String
+    }
+
+resumeLogin : Profile -> OidcLogin -> Html Msg
+resumeLogin p login =
+    let
+      profileIncomplete = (not p.hasPassword) || (p.name == "" )  
+    in
+    if profileIncomplete
+    then 
+        Html.a [] 
+        [ Html.text (String.concat ["Log in to ", login.name])]
+    else
+        Html.a 
+        [ Attr.href login.id 
+        ] 
+        [ Html.text (String.concat ["Log in to ", login.name])]
+
 type alias Flags =
-    { antiCsrf : String }
+    { antiCsrf : String 
+    , oidcLogin : Maybe OidcLogin
+    }
 
 type alias Profile = 
     { name : String
@@ -241,13 +263,25 @@ nameControl state =
     NameError -> 
         Html.button [ disabled True ] [ Html.text "Error" ]
 
-renderProfile : Profile -> PasswordState -> NameState -> (List (Html Msg))
-renderProfile p pwdState nameState =
+internalLink : Maybe OidcLogin -> String -> String -> Html Msg
+internalLink login url name =
+    let
+        returnUrl = Maybe.map .id login |> Maybe.withDefault ""
+    in
+        Html.a [ Attr.href url ] [ Html.text name ]
+
+renderProfile : Maybe OidcLogin -> Profile -> PasswordState -> NameState -> (List (Html Msg))
+renderProfile oidcLogin p pwdState nameState =
     [ Html.h2 [] [ Html.text p.email ]
     , passwordLabel p.hasPassword
     , passwordControl pwdState
     , nameLabel p.name
     , nameControl nameState
+    , Html.ul [] 
+      [ Html.li [] [ internalLink oidcLogin "/ChangeUsername" "Change email" ]
+      , Html.li [] [ internalLink oidcLogin "Unregister" "Delete your account" ]
+      ]
+    , Maybe.map (resumeLogin p) oidcLogin |> Maybe.withDefault (Html.text "")
     ]
 
 type alias Input =
@@ -361,6 +395,7 @@ type alias Model =
     , profile : ApiResponse Profile
     , password : PasswordState
     , name: NameState
+    , oidcLogin : Maybe OidcLogin
     }
 
 refresh : Profile -> Model -> Model
@@ -369,6 +404,7 @@ refresh p m =
     , password = profilePasswordState p
     , name = profileNamestate p
     , profile = Received p
+    , oidcLogin = m.oidcLogin
     }
 
 type Msg =
@@ -402,6 +438,7 @@ init f =
       , profile = Pending
       , password = initPasswordState
       , name = initNameState
+      , oidcLogin = f.oidcLogin
       }
     , fetchProfile )
 
@@ -423,7 +460,7 @@ view m =
             (case m.profile of
              Pending -> [ Html.text "" ]
              Errored -> renderError 
-             Received p -> renderProfile p m.password m.name )
+             Received p -> renderProfile m.oidcLogin p m.password m.name )
           ] 
         ]
     }

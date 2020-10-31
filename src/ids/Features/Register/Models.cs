@@ -11,6 +11,9 @@ namespace Ids.Register
         [EmailAddress]
         [MaxLength(256)]
         public string Email { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class EmailVerificationCode
@@ -21,6 +24,9 @@ namespace Ids.Register
         [Required]
         [MaxLength(512)]
         public string Code { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class UnverifiedAccount

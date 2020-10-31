@@ -9,6 +9,9 @@ namespace Ids.Forgot
         [EmailAddress]
         [MaxLength(256)]
         public string Email { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class VerifiedResetInput
@@ -16,7 +19,7 @@ namespace Ids.Forgot
         [Required]
         [Guid]
         public string UserId { get; set; }
-        
+
         [Required]
         [MaxLength(512)]
         public string Code { get; set; }
@@ -28,6 +31,9 @@ namespace Ids.Forgot
 
         [Compare(nameof(Password))]
         public string PasswordRepeated { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class ResetToken

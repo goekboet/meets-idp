@@ -1,25 +1,24 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace Ids.Unregister
 {
-    public class UnregisterRequest
-    {
-        [Required]
-        [EmailAddress]
-        [MaxLength(256)]
-        public string Email { get; set; }
-    }
-
     public class EmailVerificationCode
     {
         [Required]
-        [Guid]
-        public string UserId { get; set; }
-        [Required]
         [MaxLength(512)]
         public string Code { get; set; }
+
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
+    }
+
+    public class OidcLogin
+    {
+        [MaxLength(4096)]
+        public string ReturnUrl { get; set; }
     }
 
     public class UnverifiedAccount
@@ -37,16 +36,13 @@ namespace Ids.Unregister
     public class ActiveAccount
     {
         public ActiveAccount(
-            string userId,
             string email,
             string code)
         {
-            UserId = userId;
             Email = email;
             Code = code;
         }
 
-        public string UserId { get; }
         public string Email { get; }
         public string Code { get; }
     }
@@ -54,10 +50,11 @@ namespace Ids.Unregister
     public interface IAccountDeletion
     {
         public Task<Result<ActiveAccount>> Verify(
-            UnverifiedAccount a);
+            ClaimsPrincipal p);
 
         public Task<Result<Unit>> Delete(
-            ActiveAccount a);
+            ClaimsPrincipal p,
+            string token);
     }
 
     public interface ICodeDistribution

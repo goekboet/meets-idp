@@ -14,6 +14,7 @@
         <h2>What's your e-mail?</h2>
         <p>We will send you a welcome e-mail with instructions on how to activate your account. </p>
         <form asp-controller="Register" asp-action="RequestEmailVerification" method="POST">
+            <input type="hidden" asp-for="ReturnUrl" />
             <div class="forminput">
                 <label asp-for="Email" class="control-label"></label>
                 <input type="text" class="form-control" placeholder="Email" asp-for="Email" autofocus>

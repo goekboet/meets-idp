@@ -5113,7 +5113,11 @@ function _Http_track(router, xhr, tracker)
 			size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
-}var $elm$core$List$cons = _List_cons;
+}var $elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var $elm$core$Maybe$Nothing = {$: 'Nothing'};
+var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var $elm$core$Array$foldr = F3(
 	function (func, baseCase, _v0) {
@@ -5216,10 +5220,6 @@ var $elm$json$Json$Decode$OneOf = function (a) {
 };
 var $elm$core$Basics$False = {$: 'False'};
 var $elm$core$Basics$add = _Basics_add;
-var $elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
 var $elm$core$Basics$append = _Utils_append;
@@ -11009,9 +11009,11 @@ var $author$project$Main$PasswordUnavailiable = {$: 'PasswordUnavailiable'};
 var $author$project$Main$initPasswordState = $author$project$Main$PasswordUnavailiable;
 var $author$project$Main$init = function (f) {
 	return _Utils_Tuple2(
-		{antiCsrf: f.antiCsrf, name: $author$project$Main$initNameState, password: $author$project$Main$initPasswordState, profile: $author$project$Main$Pending},
+		{antiCsrf: f.antiCsrf, name: $author$project$Main$initNameState, oidcLogin: f.oidcLogin, password: $author$project$Main$initPasswordState, profile: $author$project$Main$Pending},
 		$author$project$Main$fetchProfile);
 };
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (model) {
@@ -11048,6 +11050,7 @@ var $author$project$Main$refresh = F2(
 		return {
 			antiCsrf: m.antiCsrf,
 			name: $author$project$Main$profileNamestate(p),
+			oidcLogin: m.oidcLogin,
 			password: $author$project$Main$profilePasswordState(p),
 			profile: $author$project$Main$Received(p)
 		};
@@ -11444,6 +11447,38 @@ var $author$project$Main$renderError = _List_fromArray(
 				$elm$html$Html$text('You can try reloading the page.')
 			]))
 	]);
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Main$internalLink = F3(
+	function (login, url, name) {
+		var returnUrl = A2(
+			$elm$core$Maybe$withDefault,
+			'',
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.id;
+				},
+				login));
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href(url)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(name)
+				]));
+	});
 var $author$project$Main$ChangeNameNew = function (a) {
 	return {$: 'ChangeNameNew', a: a};
 };
@@ -11857,8 +11892,34 @@ var $author$project$Main$passwordLabel = function (has) {
 	};
 	return has ? password('added') : password('not added');
 };
-var $author$project$Main$renderProfile = F3(
-	function (p, pwdState, nameState) {
+var $author$project$Main$resumeLogin = F2(
+	function (p, login) {
+		var profileIncomplete = (!p.hasPassword) || (p.name === '');
+		return profileIncomplete ? A2(
+			$elm$html$Html$a,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$elm$core$String$concat(
+						_List_fromArray(
+							['Log in to ', login.name])))
+				])) : A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$href(login.id)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$elm$core$String$concat(
+						_List_fromArray(
+							['Log in to ', login.name])))
+				]));
+	});
+var $author$project$Main$renderProfile = F4(
+	function (oidcLogin, p, pwdState, nameState) {
 		return _List_fromArray(
 			[
 				A2(
@@ -11871,7 +11932,34 @@ var $author$project$Main$renderProfile = F3(
 				$author$project$Main$passwordLabel(p.hasPassword),
 				$author$project$Main$passwordControl(pwdState),
 				$author$project$Main$nameLabel(p.name),
-				$author$project$Main$nameControl(nameState)
+				$author$project$Main$nameControl(nameState),
+				A2(
+				$elm$html$Html$ul,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A3($author$project$Main$internalLink, oidcLogin, '/ChangeUsername', 'Change email')
+							])),
+						A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A3($author$project$Main$internalLink, $elm$core$Maybe$Nothing, 'Unregister', 'Delete your account')
+							]))
+					])),
+				A2(
+				$elm$core$Maybe$withDefault,
+				$elm$html$Html$text(''),
+				A2(
+					$elm$core$Maybe$map,
+					$author$project$Main$resumeLogin(p),
+					oidcLogin))
 			]);
 	});
 var $author$project$Main$view = function (m) {
@@ -11920,7 +12008,7 @@ var $author$project$Main$view = function (m) {
 									return $author$project$Main$renderError;
 								default:
 									var p = _v0.a;
-									return A3($author$project$Main$renderProfile, p, m.password, m.name);
+									return A4($author$project$Main$renderProfile, m.oidcLogin, p, m.password, m.name);
 							}
 						}())
 					]))
@@ -11933,8 +12021,35 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	A2(
 		$elm$json$Json$Decode$andThen,
-		function (antiCsrf) {
-			return $elm$json$Json$Decode$succeed(
-				{antiCsrf: antiCsrf});
+		function (oidcLogin) {
+			return A2(
+				$elm$json$Json$Decode$andThen,
+				function (antiCsrf) {
+					return $elm$json$Json$Decode$succeed(
+						{antiCsrf: antiCsrf, oidcLogin: oidcLogin});
+				},
+				A2($elm$json$Json$Decode$field, 'antiCsrf', $elm$json$Json$Decode$string));
 		},
-		A2($elm$json$Json$Decode$field, 'antiCsrf', $elm$json$Json$Decode$string)))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"Main.CurrentPassword":{"args":[],"type":"String.String"},"Main.NewName":{"args":[],"type":"String.String"},"Main.NewPassword":{"args":[],"type":"String.String"},"Main.NewPasswordRepeat":{"args":[],"type":"String.String"},"Main.OriginalName":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Main.Profile"],"ChangePasswordState":["Main.PasswordState"],"ChangeNameState":["Main.NameState"],"AddPwdNew":["String.String"],"AddPwdRepeat":["String.String"],"AddPwdSubmit":[],"AddPwdResponse":["Result.Result Http.Error ()"],"ChangePwdCurrent":["String.String"],"ChangePwdNew":["String.String"],"ChangePwdRepeat":["String.String"],"ChangePwdSubmit":[],"ChangePwdResponse":["Result.Result Http.Error ()"],"ChangeNameNew":["String.String"],"ChangeNameSubmit":[],"ChangeNameResponse":["Result.Result Http.Error ()"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Main.NameState":{"args":[],"tags":{"NameUnavailiable":[],"NameInput":["Main.OriginalName","Main.NewName","Basics.Bool"],"NamePending":[],"NameError":[]}},"Main.PasswordState":{"args":[],"tags":{"PasswordUnavailiable":[],"AddPasswordInput":["Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"ChangePasswordInput":["Main.CurrentPassword","Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"PasswordPending":[],"PasswordError":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
+		A2(
+			$elm$json$Json$Decode$field,
+			'oidcLogin',
+			$elm$json$Json$Decode$oneOf(
+				_List_fromArray(
+					[
+						$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+						A2(
+						$elm$json$Json$Decode$map,
+						$elm$core$Maybe$Just,
+						A2(
+							$elm$json$Json$Decode$andThen,
+							function (name) {
+								return A2(
+									$elm$json$Json$Decode$andThen,
+									function (id) {
+										return $elm$json$Json$Decode$succeed(
+											{id: id, name: name});
+									},
+									A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string));
+							},
+							A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string)))
+					])))))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"Main.CurrentPassword":{"args":[],"type":"String.String"},"Main.NewName":{"args":[],"type":"String.String"},"Main.NewPassword":{"args":[],"type":"String.String"},"Main.NewPasswordRepeat":{"args":[],"type":"String.String"},"Main.OriginalName":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Main.Profile"],"ChangePasswordState":["Main.PasswordState"],"ChangeNameState":["Main.NameState"],"AddPwdNew":["String.String"],"AddPwdRepeat":["String.String"],"AddPwdSubmit":[],"AddPwdResponse":["Result.Result Http.Error ()"],"ChangePwdCurrent":["String.String"],"ChangePwdNew":["String.String"],"ChangePwdRepeat":["String.String"],"ChangePwdSubmit":[],"ChangePwdResponse":["Result.Result Http.Error ()"],"ChangeNameNew":["String.String"],"ChangeNameSubmit":[],"ChangeNameResponse":["Result.Result Http.Error ()"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Main.NameState":{"args":[],"tags":{"NameUnavailiable":[],"NameInput":["Main.OriginalName","Main.NewName","Basics.Bool"],"NamePending":[],"NameError":[]}},"Main.PasswordState":{"args":[],"tags":{"PasswordUnavailiable":[],"AddPasswordInput":["Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"ChangePasswordInput":["Main.CurrentPassword","Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"PasswordPending":[],"PasswordError":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
