@@ -4,38 +4,36 @@
 @model VerifiedResetInput
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Forgot my password</h1>
+<h1>Forgot</h1>
+<h5>Check your emails</h5>
+<p>Paste the token from the e-mail we sent you, then choose a new password.</p>
+<form 
+    class="section"
+    asp-controller="Forgot" 
+    asp-action="Verify" 
+    method="POST">
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="input-field">
+        <i class="material-icons prefix">lock_open</i>
+        <textarea tabindex="1" class="materialize-textarea" type="text" placeholder="Token" class="validate" asp-for="Code" tabindex="1" autofocus></textarea>
+        <label asp-for="Code">Token</label>
+        <span asp-validation-for="Code" class="helper-text"></span>
     </div>
-    <div class="content light">
-        <h2>Check your emails</h2>
-        <form asp-controller="Forgot" asp-action="Verify" method="POST">
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="ReturnUrl" />
-            <p>Paste the token from the e-mail we sent you.</p>
-            <div class="forminput">
-                <label asp-for="Code" class="control-label"></label>
-                <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
-                <span asp-validation-for="Code"></span>
-            </div>
-            <p>Choose a new password.</p>
-            <div class="forminput">
-                <label asp-for="Password" class="control-label"></label>
-                <input type="password" class="form-control" placeholder="Password" asp-for="Password" autofocus>
-                <span asp-validation-for="Password"></span>
-            </div>
-            <div class="forminput">
-                <label asp-for="PasswordRepeated" class="control-label"></label>
-                <input type="password" class="form-control" placeholder="PasswordRepeated" asp-for="PasswordRepeated" autofocus>
-                <span asp-validation-for="PasswordRepeated"></span>
-            </div>
-            <div class="formbuttons">
-                <button class="heavy" name="register-submit" value="submit">Submit</button>
-            </div>
-        </form>
+    <div class="input-field">
+        <i class="material-icons prefix">lock</i>
+        <input tabindex="2" type="password" placeholder="password" class="validate" asp-for="Password" />
+        <label asp-for="Password" class="active">Password</label>
+        <span class="helper-text" asp-validation-for="Password"></span>
     </div>
-</div>
+    <div class="input-field">
+        <i class="material-icons prefix">lock_outline</i>
+        <input tabindex="3" type="password" placeholder="password" class="validate" asp-for="PasswordRepeated" />
+        <label asp-for="PasswordRepeated" class="active">Repeat password</label>
+        <span class="helper-text" asp-validation-for="PasswordRepeated"></span>
+    </div>
+    <button class="btn" name="register-submit" value="submit">Submit</button>
+</form>

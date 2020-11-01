@@ -4,26 +4,24 @@
 @model ResetInput
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Forgot my password</h1>
+<h1>Forgot</h1>
+<h5>What's your e-mail?</h5>
+<p>Provide the email you use for the account. We will send you an email with further instructions on how to reset your
+    password.</p>
+<form 
+    class="section"
+    asp-controller="Forgot" 
+    asp-action="Reset" 
+    method="POST">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="input-field">
+        <i class="material-icons prefix">email</i>
+        <input type="email" placeholder="Email" class="validate" asp-for="Email" tabindex="1" autofocus>
+        <label class="active" asp-for="Email">Email</label>
+        <span class="helper-text" asp-validation-for="Email"></span>
     </div>
-    <div class="content light">
-        <h2>What's your e-mail?</h2>
-        <p>Provide the email you use for the account. We will send you an email with further instructions on how to reset your password.</p>
-        <form asp-controller="Forgot" asp-action="Reset" method="POST">
-            <input type="hidden" asp-for="ReturnUrl" />
-            <div class="forminput">
-                <label asp-for="Email" class="control-label"></label>
-                <input class="form-control" placeholder="Email" asp-for="Email" autofocus>
-                <span asp-validation-for="Email"></span>
-            </div>
-            <div class="formbuttons">
-                <button class="heavy" name="forgot-submit" value="submit">Submit</button>
-            </div>
-        </form>
-    </div>
-</div>
+    <button class="btn" name="forgot-submit" value="submit">Submit</button>
+</form>

@@ -9,7 +9,11 @@
 <h1>Register</h1>
 <h5>What's your e-mail?</h5>
 <p>We will send you a welcome e-mail with instructions on how to activate your account. </p>
-<form class="section" asp-controller="Register" asp-action="RequestEmailVerification" method="POST">
+<form 
+    class="section" 
+    asp-controller="Register" 
+    asp-action="RequestEmailVerification" 
+    method="POST">
     <input type="hidden" asp-for="ReturnUrl" />
     <div class="input-field">
         <i class="material-icons prefix">email</i>
@@ -17,5 +21,5 @@
         <label class="active" asp-for="Email">Email</label>
         <span class="helper-text" asp-validation-for="Email"></span>
     </div>
-    <button class="btn right" type="submit" name="login_submit" tabindex="2">Submit</button>
+    <button class="btn" type="submit" name="login_submit" tabindex="2">Submit</button>
 </form>
