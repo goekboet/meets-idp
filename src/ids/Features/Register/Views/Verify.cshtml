@@ -4,27 +4,24 @@
 @model EmailVerificationCode
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Register</h1>
+<h1>Register</h1>
+<h5>Paste the token we sent you</h5>
+<p>In the welcome email we sent you there is a token. Paste it in the input below and submit to activate your account.</p>
+<form 
+    class="section" 
+    asp-controller="Register" 
+    asp-action="VerifyCode" 
+    method="POST">
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="input-field">
+        <i class="material-icons prefix">lock_open</i>
+        <textarea class="materialize-textarea" type="text" placeholder="Token" class="validate" asp-for="Code" tabindex="1" autofocus></textarea>
+        <label asp-for="Code">Token</label>
+        <span asp-validation-for="Code" class="helper-text"></span>
+        <button class="btn right" type="submit" name="login_submit" tabindex="2">Submit</button>
     </div>
-    <div class="content light">
-        <h2>Paste the token we sent you</h2>
-        <p>In the welcome email we sent you there is a token. Paste it in the input below and submit to activate your account.</p>
-        <form asp-controller="Register" asp-action="VerifyCode" method="POST">
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="ReturnUrl" />
-            <div class="forminput">
-                <label asp-for="Code" class="control-label"></label>
-                <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
-                <span asp-validation-for="Code"></span>
-            </div>
-            <div class="formbuttons">
-                <button class="heavy" name="register-submit" value="submit">Submit</button>
-            </div>
-        </form>
-    </div>
-</div>
+</form>

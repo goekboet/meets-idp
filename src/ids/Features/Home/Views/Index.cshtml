@@ -5,35 +5,29 @@
     var version = typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.GetName().Version.ToString();
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col s12 m6">
-            <h1>Welcome</h1>
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">OpenId connect</span>
-                    <p><b>@Context.Request.Host</b> acts as an oidc authentication server. The implementation is based
-                        on <a href="https://github.com/IdentityServer/IdentityServer4">Identity server 4</a> (version:
-                        @version). You can find the discovery document <a
-href="~/.well-known/openid-configuration">here</a>.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">User Account</span>
-                    <p>You can create an account using your email, manage credentials and your profile info. Register an
-                        account <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="/">here.</a></p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Single sing-on</span>
-                    <p>Provide your credentials once and stay logged in at all apps using <b>@Context.Request.Host</b>
-                        as
-                        authentication server</p>
-                </div>
-            </div>
-        </div>
+
+<h1>Welcome</h1>
+<div class="card">
+    <div class="card-content">
+        <span class="card-title">OpenId connect</span>
+        <p><b>@Context.Request.Host</b> acts as an oidc authentication server. The implementation is based
+            on <a href="https://github.com/IdentityServer/IdentityServer4">Identity server 4</a> (version:
+            @version). You can find the discovery document <a href="~/.well-known/openid-configuration">here</a>.</p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-content">
+        <span class="card-title">User Account</span>
+        <p>You can create an account using your email, manage credentials and your profile info. Register an
+            account <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="/">here.</a></p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-content">
+        <span class="card-title">Single sing-on</span>
+        <p>Provide your credentials once and stay logged in at all apps using <b>@Context.Request.Host</b>
+            as
+            authentication server</p>
     </div>
 </div>
 </div>
