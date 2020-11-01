@@ -11447,6 +11447,7 @@ var $author$project$Main$renderError = _List_fromArray(
 				$elm$html$Html$text('You can try reloading the page.')
 			]))
 	]);
+var $elm$html$Html$h5 = _VirtualDom_node('h5');
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -11508,17 +11509,43 @@ var $author$project$Main$inputLabel = F2(
 	});
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $author$project$Main$input = F5(
-	function (n, d, t, inp, change) {
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $author$project$Main$input = F6(
+	function (icon_name, n, d, t, inp, change) {
 		return A2(
-			$elm$html$Html$span,
-			_List_Nil,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
+					$elm$html$Html$Attributes$class('input-field')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$i,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('material-icons prefix')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(icon_name)
+						])),
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('validate'),
+							$elm$html$Html$Attributes$placeholder(d),
+							$elm$html$Html$Attributes$name(n),
+							$elm$html$Html$Attributes$type_(t),
+							$elm$html$Html$Events$onInput(change)
+						]),
+					_List_Nil),
 					A2(
 					$elm$html$Html$label,
 					_List_fromArray(
 						[
+							$elm$html$Html$Attributes$class('active'),
 							$elm$html$Html$Attributes$for(n)
 						]),
 					_List_fromArray(
@@ -11527,17 +11554,11 @@ var $author$project$Main$input = F5(
 							A2($author$project$Main$inputLabel, d, inp.dirty))
 						])),
 					A2(
-					$elm$html$Html$input,
+					$elm$html$Html$span,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$name(n),
-							$elm$html$Html$Attributes$type_(t),
-							$elm$html$Html$Events$onInput(change)
+							$elm$html$Html$Attributes$class('helper-text')
 						]),
-					_List_Nil),
-					A2(
-					$elm$html$Html$i,
-					_List_Nil,
 					_List_fromArray(
 						[
 							$elm$html$Html$text(inp.validationMsg)
@@ -11598,15 +11619,19 @@ var $author$project$Main$nameControl = function (state) {
 			if (a) {
 				var newNameInput = A2($author$project$Main$nameInput, on, nn);
 				return A2(
-					$elm$html$Html$span,
-					_List_Nil,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A5($author$project$Main$input, 'NewName', 'Name', 'text', newNameInput, $author$project$Main$ChangeNameNew),
+							$elm$html$Html$Attributes$class('section')
+						]),
+					_List_fromArray(
+						[
+							A6($author$project$Main$input, 'person_outline', 'NewName', 'Name', 'text', newNameInput, $author$project$Main$ChangeNameNew),
 							A2(
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn'),
 									$elm$html$Html$Events$onClick($author$project$Main$ChangeNameSubmit),
 									$elm$html$Html$Attributes$disabled(
 									$author$project$Main$unSubmittable(
@@ -11622,6 +11647,7 @@ var $author$project$Main$nameControl = function (state) {
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn-flat'),
 									$elm$html$Html$Events$onClick(
 									$author$project$Main$ChangeNameState(
 										A3($author$project$Main$NameInput, on, nn, false)))
@@ -11636,6 +11662,7 @@ var $author$project$Main$nameControl = function (state) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
+							$elm$html$Html$Attributes$class('btn'),
 							$elm$html$Html$Events$onClick(
 							$author$project$Main$ChangeNameState(
 								A3($author$project$Main$NameInput, on, nn, true)))
@@ -11651,6 +11678,7 @@ var $author$project$Main$nameControl = function (state) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$class('btn'),
 						$elm$html$Html$Attributes$disabled(true)
 					]),
 				_List_fromArray(
@@ -11662,6 +11690,7 @@ var $author$project$Main$nameControl = function (state) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$class('btn'),
 						$elm$html$Html$Attributes$disabled(true)
 					]),
 				_List_fromArray(
@@ -11674,7 +11703,7 @@ var $elm$html$Html$b = _VirtualDom_node('b');
 var $author$project$Main$nameLabel = function (on) {
 	var name = function (s) {
 		return A2(
-			$elm$html$Html$label,
+			$elm$html$Html$p,
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -11744,16 +11773,20 @@ var $author$project$Main$passwordControl = function (state) {
 				var pwdRepeatInput = A2($author$project$Main$repeatPwdInput, np, pr);
 				var pwdInput = $author$project$Main$newPwdInput(np);
 				return A2(
-					$elm$html$Html$span,
-					_List_Nil,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A5($author$project$Main$input, 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$AddPwdNew),
-							A5($author$project$Main$input, 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$AddPwdRepeat),
+							$elm$html$Html$Attributes$class('section')
+						]),
+					_List_fromArray(
+						[
+							A6($author$project$Main$input, 'lock', 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$AddPwdNew),
+							A6($author$project$Main$input, 'lock_outline', 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$AddPwdRepeat),
 							A2(
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn'),
 									$elm$html$Html$Events$onClick($author$project$Main$AddPwdSubmit),
 									$elm$html$Html$Attributes$disabled(
 									$author$project$Main$unSubmittable(
@@ -11768,6 +11801,7 @@ var $author$project$Main$passwordControl = function (state) {
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn-flat'),
 									$elm$html$Html$Events$onClick(
 									$author$project$Main$ChangePasswordState(
 										A3($author$project$Main$AddPasswordInput, np, pr, false)))
@@ -11782,6 +11816,7 @@ var $author$project$Main$passwordControl = function (state) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
+							$elm$html$Html$Attributes$class('btn'),
 							$elm$html$Html$Events$onClick(
 							$author$project$Main$ChangePasswordState(
 								A3($author$project$Main$AddPasswordInput, np, pr, true)))
@@ -11801,17 +11836,21 @@ var $author$project$Main$passwordControl = function (state) {
 				var pwdInput = $author$project$Main$newPwdInput(np);
 				var currentPwdInput = $author$project$Main$newPwdInput(cp);
 				return A2(
-					$elm$html$Html$span,
-					_List_Nil,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							A5($author$project$Main$input, 'CurrentPwd', 'Current password', 'password', currentPwdInput, $author$project$Main$ChangePwdCurrent),
-							A5($author$project$Main$input, 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$ChangePwdNew),
-							A5($author$project$Main$input, 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$ChangePwdRepeat),
+							$elm$html$Html$Attributes$class('section')
+						]),
+					_List_fromArray(
+						[
+							A6($author$project$Main$input, 'lock_open', 'CurrentPwd', 'Current password', 'password', currentPwdInput, $author$project$Main$ChangePwdCurrent),
+							A6($author$project$Main$input, 'lock', 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$ChangePwdNew),
+							A6($author$project$Main$input, 'lock_outline', 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$ChangePwdRepeat),
 							A2(
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn'),
 									$elm$html$Html$Events$onClick($author$project$Main$ChangePwdSubmit),
 									$elm$html$Html$Attributes$disabled(
 									$author$project$Main$unSubmittable(
@@ -11826,6 +11865,7 @@ var $author$project$Main$passwordControl = function (state) {
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
+									$elm$html$Html$Attributes$class('btn-flat'),
 									$elm$html$Html$Events$onClick(
 									$author$project$Main$ChangePasswordState(
 										A4($author$project$Main$ChangePasswordInput, cp, np, pr, false)))
@@ -11840,6 +11880,7 @@ var $author$project$Main$passwordControl = function (state) {
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
+							$elm$html$Html$Attributes$class('btn'),
 							$elm$html$Html$Events$onClick(
 							$author$project$Main$ChangePasswordState(
 								A4($author$project$Main$ChangePasswordInput, cp, np, pr, true)))
@@ -11876,7 +11917,7 @@ var $author$project$Main$passwordControl = function (state) {
 var $author$project$Main$passwordLabel = function (has) {
 	var password = function (s) {
 		return A2(
-			$elm$html$Html$label,
+			$elm$html$Html$p,
 			_List_Nil,
 			_List_fromArray(
 				[
@@ -11923,7 +11964,7 @@ var $author$project$Main$renderProfile = F4(
 		return _List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h2,
+				$elm$html$Html$h5,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -11950,7 +11991,7 @@ var $author$project$Main$renderProfile = F4(
 						_List_Nil,
 						_List_fromArray(
 							[
-								A3($author$project$Main$internalLink, $elm$core$Maybe$Nothing, 'Unregister', 'Delete your account')
+								A3($author$project$Main$internalLink, oidcLogin, 'Unregister', 'Delete your account')
 							]))
 					])),
 				A2(
@@ -11970,7 +12011,7 @@ var $author$project$Main$view = function (m) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('root-view')
+						$elm$html$Html$Attributes$class('container')
 					]),
 				_List_fromArray(
 					[
@@ -11978,39 +12019,41 @@ var $author$project$Main$view = function (m) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('content heavy')
+								$elm$html$Html$Attributes$class('row')
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$h1,
-								_List_Nil,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Profile')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('content light')
-							]),
-						function () {
-							var _v0 = m.profile;
-							switch (_v0.$) {
-								case 'Pending':
-									return _List_fromArray(
-										[
-											$elm$html$Html$text('')
-										]);
-								case 'Errored':
-									return $author$project$Main$renderError;
-								default:
-									var p = _v0.a;
-									return A4($author$project$Main$renderProfile, m.oidcLogin, p, m.password, m.name);
-							}
-						}())
+										$elm$html$Html$Attributes$class('col s12 m6')
+									]),
+								A2(
+									$elm$core$List$cons,
+									A2(
+										$elm$html$Html$h1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Profile')
+											])),
+									function () {
+										var _v0 = m.profile;
+										switch (_v0.$) {
+											case 'Pending':
+												return _List_fromArray(
+													[
+														$elm$html$Html$text('')
+													]);
+											case 'Errored':
+												return $author$project$Main$renderError;
+											default:
+												var p = _v0.a;
+												return A4($author$project$Main$renderProfile, m.oidcLogin, p, m.password, m.name);
+										}
+									}()))
+							]))
 					]))
 			]),
 		title: 'Profile'

@@ -81,7 +81,7 @@ nameJson n =
 passwordLabel : Bool -> Html Msg
 passwordLabel has =
     let
-        password s = Html.label [] [ Html.b [] [ Html.text "password: "], Html.text s ]
+        password s = Html.p [] [ Html.b [] [ Html.text "password: "], Html.text s ]
     in
         if has 
         then password "added" 
@@ -114,19 +114,26 @@ passwordControl state =
                 pwdInput = newPwdInput np
                 pwdRepeatInput = repeatPwdInput np pr
             in  
-                Html.span []
-                [ input "NewPwd" "New password" "password" pwdInput AddPwdNew
-                , input "NewPwdRepeat" "Repeat new password" "password" pwdRepeatInput AddPwdRepeat
+                Html.div [ class "section" ]
+                [ input "lock" "NewPwd" "New password" "password" pwdInput AddPwdNew
+                , input "lock_outline" "NewPwdRepeat" "Repeat new password" "password" pwdRepeatInput AddPwdRepeat
                 , Html.button 
-                  [ onClick AddPwdSubmit
+                  [ class "btn"
+                  , onClick AddPwdSubmit
                   , disabled (unSubmittable [ pwdInput, pwdRepeatInput ]) ] 
                   [ Html.text "Add" ]
                 , Html.button 
-                  [ onClick (ChangePasswordState (AddPasswordInput np pr False))] 
+                  [ class "btn-flat"
+                  , onClick (ChangePasswordState (AddPasswordInput np pr False))
+                  ] 
                   [ Html.text "Cancel" ]
                 ]
         else
-            Html.button [ onClick (ChangePasswordState (AddPasswordInput np pr True))] [ Html.text "Add"]
+            Html.button 
+            [ class "btn"
+            , onClick (ChangePasswordState (AddPasswordInput np pr True))
+            ] 
+            [ Html.text "Add"]
     ChangePasswordInput cp np pr active ->
         if active
         then
@@ -135,19 +142,26 @@ passwordControl state =
                 pwdInput = newPwdInput np
                 pwdRepeatInput = repeatPwdInput np pr
             in  
-                Html.span []
-                [ input "CurrentPwd" "Current password" "password" currentPwdInput ChangePwdCurrent
-                , input "NewPwd" "New password" "password" pwdInput ChangePwdNew
-                , input "NewPwdRepeat" "Repeat new password" "password" pwdRepeatInput ChangePwdRepeat
+                Html.div [ class "section" ]
+                [ input "lock_open" "CurrentPwd" "Current password" "password" currentPwdInput ChangePwdCurrent
+                , input "lock" "NewPwd" "New password" "password" pwdInput ChangePwdNew
+                , input "lock_outline" "NewPwdRepeat" "Repeat new password" "password" pwdRepeatInput ChangePwdRepeat
                 , Html.button 
-                  [ onClick ChangePwdSubmit
+                  [ class "btn"
+                  , onClick ChangePwdSubmit
                   , disabled (unSubmittable [ currentPwdInput, pwdInput, pwdRepeatInput ]) 
                   ] 
                   [ Html.text "Change" ]
-                , Html.button [ onClick (ChangePasswordState (ChangePasswordInput cp np pr False))] [ Html.text "Cancel" ]
+                , Html.button 
+                  [ class "btn-flat"
+                  , onClick (ChangePasswordState (ChangePasswordInput cp np pr False))
+                  ] [ Html.text "Cancel" ]         
                 ]
         else
-            Html.button [ onClick (ChangePasswordState (ChangePasswordInput cp np pr True))] [ Html.text "Change"]
+            Html.button 
+            [ class "btn" 
+            , onClick (ChangePasswordState (ChangePasswordInput cp np pr True))] 
+            [ Html.text "Change"]
     PasswordPending ->
         Html.button [ disabled True] [ Html.text "Pending" ]
     PasswordError ->
@@ -225,7 +239,7 @@ nameInput on nn =
 nameLabel : OriginalName -> Html Msg
 nameLabel on =
     let
-        name s = Html.label [] [ Html.b [] [ Html.text "name: "], Html.text s ]
+        name s = Html.p [] [ Html.b [] [ Html.text "name: "], Html.text s ]
     in
         if on /= "" 
         then name on 
@@ -247,21 +261,30 @@ nameControl state =
             let
                 newNameInput = nameInput on nn
             in        
-                Html.span []
-                [ input "NewName" "Name" "text" newNameInput ChangeNameNew
+                Html.div [ class "section" ]
+                [ input "person_outline" "NewName" "Name" "text" newNameInput ChangeNameNew
                 , Html.button 
-                  [ onClick ChangeNameSubmit
+                  [ class "btn"
+                  , onClick ChangeNameSubmit
                   , disabled (unSubmittable [ newNameInput ]) 
                   ] 
                   [ Html.text (nameButtonLabel on) ]
-                , Html.button [ onClick (ChangeNameState (NameInput on nn False))] [ Html.text "Cancel" ]
+                , Html.button 
+                  [ class "btn-flat"
+                  , onClick (ChangeNameState (NameInput on nn False))
+                  ] 
+                  [ Html.text "Cancel" ]
                 ]
         else
-            Html.button [ onClick (ChangeNameState (NameInput on nn True))] [ Html.text (nameButtonLabel on) ]
+            Html.button 
+              [ class "btn"
+              , onClick (ChangeNameState (NameInput on nn True))
+              ] 
+              [ Html.text (nameButtonLabel on) ]
     NamePending -> 
-        Html.button [ disabled True ] [ Html.text "Pending" ]
+        Html.button [ class "btn",  disabled True ] [ Html.text "Pending" ]
     NameError -> 
-        Html.button [ disabled True ] [ Html.text "Error" ]
+        Html.button [ class "btn",  disabled True ] [ Html.text "Error" ]
 
 internalLink : Maybe OidcLogin -> String -> String -> Html Msg
 internalLink login url name =
@@ -272,7 +295,7 @@ internalLink login url name =
 
 renderProfile : Maybe OidcLogin -> Profile -> PasswordState -> NameState -> (List (Html Msg))
 renderProfile oidcLogin p pwdState nameState =
-    [ Html.h2 [] [ Html.text p.email ]
+    [ Html.h5 [] [ Html.text p.email ]
     , passwordLabel p.hasPassword
     , passwordControl pwdState
     , nameLabel p.name
@@ -305,12 +328,13 @@ inputLabel title dirty =
     else title
 
 
-input : InputName -> InputDisplay -> InputType -> Input -> (String -> Msg) -> Html Msg
-input n d t inp change =
-    Html.span [] 
-    [ Html.label [ Attr.for n ] [ Html.text (inputLabel d inp.dirty)]
-    , Html.input [ Attr.name n, Attr.type_ t, onInput change ] []
-    , Html.i [] [ Html.text inp.validationMsg ]
+input : String -> InputName -> InputDisplay -> InputType -> Input -> (String -> Msg) -> Html Msg
+input icon_name n d t inp change =
+    Html.div [ class "input-field" ] 
+    [ Html.i [ class "material-icons prefix" ] [ Html.text icon_name ]
+    , Html.input [ class "validate", Attr.placeholder d, Attr.name n, Attr.type_ t, onInput change ] []
+    , Html.label [ class "active", Attr.for n ] [ Html.text (inputLabel d inp.dirty)]
+    , Html.span [ class "helper-text" ] [ Html.text inp.validationMsg ]
     ]
 
 emptyInput : Input
@@ -452,15 +476,15 @@ view : Model -> Document Msg
 view m = 
     { title = "Profile"
     , body = 
-        [ Html.div [ class "root-view" ] 
-          [ Html.div [ class "content heavy" ] 
-            [ Html.h1 [] [ Html.text "Profile" ]
+        [ Html.div [ class "container" ] 
+          [ Html.div [ class "row" ]
+            [ Html.div [ class "col s12 m6" ] 
+                (Html.h1 [] [ Html.text "Profile" ]
+                :: (case m.profile of
+                    Pending -> [ Html.text "" ]
+                    Errored -> renderError 
+                    Received p -> renderProfile m.oidcLogin p m.password m.name ))
             ]  
-          , Html.div [ class "content light" ] 
-            (case m.profile of
-             Pending -> [ Html.text "" ]
-             Errored -> renderError 
-             Received p -> renderProfile m.oidcLogin p m.password m.name )
           ] 
         ]
     }
