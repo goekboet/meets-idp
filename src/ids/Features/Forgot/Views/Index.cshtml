@@ -15,6 +15,7 @@
         <h2>What's your e-mail?</h2>
         <p>Provide the email you use for the account. We will send you an email with further instructions on how to reset your password.</p>
         <form asp-controller="Forgot" asp-action="Reset" method="POST">
+            <input type="hidden" asp-for="ReturnUrl" />
             <div class="forminput">
                 <label asp-for="Email" class="control-label"></label>
                 <input class="form-control" placeholder="Email" asp-for="Email" autofocus>

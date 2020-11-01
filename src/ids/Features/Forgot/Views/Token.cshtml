@@ -15,6 +15,7 @@
         <h2>Check your emails</h2>
         <form asp-controller="Forgot" asp-action="Verify" method="POST">
             <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="ReturnUrl" />
             <p>Paste the token from the e-mail we sent you.</p>
             <div class="forminput">
                 <label asp-for="Code" class="control-label"></label>
