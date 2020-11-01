@@ -4,28 +4,18 @@
 @model EmailVerificationCode
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Delete your account</h1>
+<h1>Delete</h1>
+<h5>Paste token from the email</h5>
+<form class="section" asp-controller="Unregister" asp-action="Delete" method="POST">
+    <div class="input-field">
+        <i class="material-icons prefix">lock_open</i>
+        <textarea class="materialize-textarea" type="text" placeholder="Token" class="validate" asp-for="Code" tabindex="1" autofocus></textarea>
+        <label asp-for="Code">Token</label>
+        <span asp-validation-for="Code" class="helper-text"></span>
     </div>
-    <div class="content light">
-        <h2>Verify</h2>
-        <form asp-controller="Unregister" asp-action="Delete" method="POST">
-            <div class="forminput">
-                <label asp-for="Code" class="control-label"></label>
-                <input class="form-control" placeholder="Code" asp-for="Code" autofocus>
-                <span asp-validation-for="Code"></span>
-            </div>
-            <div class="formbuttons">
-                <partial name="_ValidationSummary" />
-                <a asp-controller="ProfileSpa"
-                   asp-action="Index"
-                   asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
-                <button class="heavy" name="register-submit" value="submit">Submit</button>
-            </div>
-        </form>
-    </div>
-</div>
+    <button class="btn" name="register-submit" value="submit">Submit</button>
+    <a class="btn-flat" asp-controller="ProfileSpa" asp-action="Index" asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
+</form>

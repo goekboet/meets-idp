@@ -10,7 +10,11 @@
 <h1>Change email</h1>
 <h5>What's the new email?</h5>
 <p>We will send an email to this address with information on how to finalize the change. </p>
-<form class="section" asp-controller="ChangeUsername" asp-action="Verify" method="POST">
+<form 
+    class="section" 
+    asp-controller="ChangeUsername" 
+    asp-action="Verify" 
+    method="POST">
     <div class="input-field">
         <i class="material-icons prefix">email</i>
         <input type="email" placeholder="email" class="validate" asp-for="NewUsername" autofocus>
