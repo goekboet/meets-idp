@@ -1,24 +1,20 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
 @using Ids.Logout
 @model LogoutInput
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>End session</h1>
-    </div>
-    <div class="content light">
-        <h2>Confirm</h2>
-        <form asp-controller="Logout" asp-action="EndSession" method="POST">
-            <input type="hidden" asp-for="LogoutId" />
-            <p>You will terminate single-sign-in for all apps using @(Context.Request.Host) as authentication server. You will be prompted for your credentials the next time you log in to any of them.</p>
-            <div class="formbuttons">
-                <button class="heavy" name="login-submit" value="submit">Yes</button>
-            </div>
-        </form>
-    </div>
-</div>
+<h1>Logout</h1>
+<h5>Confirm</h5>
+<p>You will terminate single-sign-in for all apps using @(Context.Request.Host) as authentication server. You will
+        be prompted for your credentials the next time you log in to any of them.</p>
+<form 
+    asp-controller="Logout" 
+    asp-action="EndSession" 
+    method="POST">
+    <input type="hidden" asp-for="LogoutId" />
+    <button class="btn" name="login-submit" value="submit">Yes</button>
+</form>
