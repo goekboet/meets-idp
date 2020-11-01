@@ -4,28 +4,19 @@
 @model ChangeUsernameInput
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Change email</h1>
+<h1>Change email</h1>
+<h5>What's the new email?</h5>
+<p>We will send an email to this address with information on how to finalize the change. </p>
+<form class="section" asp-controller="ChangeUsername" asp-action="Verify" method="POST">
+    <div class="input-field">
+        <i class="material-icons prefix">email</i>
+        <input type="email" placeholder="email" class="validate" asp-for="NewUsername" autofocus>
+        <label asp-for="NewUsername" class="active">New email</label>
+        <span class="helper-text" asp-validation-for="NewUsername"></span>
     </div>
-    <div class="content light">
-        <h2>What's the new email?</h2>
-        <form asp-controller="ChangeUsername" asp-action="Verify" method="POST">
-            <div class="forminput">
-                <label asp-for="NewUsername" class="control-label"></label>
-                <input class="form-control" placeholder="New email" asp-for="NewUsername" autofocus>
-                <span asp-validation-for="NewUsername"></span>
-            </div>
-            <div class="formbuttons">
-                <partial name="_ValidationSummary" />
-                <a asp-controller="ProfileSpa"
-                   asp-action="Index"
-                   asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
-                <button class="heavy" name="forgot-submit" value="submit">Submit</button>
-            </div>
-        </form>
-    </div>
-</div>
+    <button class="btn" name="forgot-submit" value="submit">Submit</button>
+    <a class="btn-flat" asp-controller="ProfileSpa" asp-action="Index" asp-route-returnUrl="@Model.ReturnUrl"> Cancel</a>
+</form>
