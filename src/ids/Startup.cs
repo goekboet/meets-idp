@@ -62,10 +62,15 @@ namespace Ids
             
             app.UseForwardedHeaders();
 
-            if (Env.EnvironmentName == "Development")
+            if (Configuration.GetValue<bool>("Development"))
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
+            
 
             app.UseStaticFiles();
             app.UseRouting();

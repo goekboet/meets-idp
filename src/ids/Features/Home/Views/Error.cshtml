@@ -1,7 +1,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Layout/MaterialUi.cshtml";
 }
 
 @using Ids.Home
@@ -13,22 +13,18 @@
     var request_id = Model?.Error?.RequestId;
 }
 
-<div class="root-view">
-    <div class="content heavy">
-        <h1>Technical error</h1>
-    </div>
-    <div class="content light">
-        <h2>Something went wrong. You can always try again. If you encounter this page repeatedly please make a note of the details on this page and contact webmaster.</h2>
-        @if (error != null)
-        {
-            if (errorDescription != null)
-            {
-                <p>@errorDescription</p>
-            }
-        }
-        @if (request_id != null)
-        {
-            <p>Request Id: @request_id</p>
-        }
-    </div>
-</div>
+<h1>Error</h1>
+<h5>Something went wrong</h5>
+<p>You can always try again. If you encounter this page repeatedly please make a note of the details on this page and
+    contact webmaster.</p>
+@if (error != null)
+{
+    if (errorDescription != null)
+    {
+        <p>@errorDescription</p>
+    }
+}
+@if (request_id != null)
+{
+    <p>Request Id: @request_id</p>
+}
