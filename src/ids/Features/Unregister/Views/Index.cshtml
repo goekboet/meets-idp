@@ -11,6 +11,10 @@
 <h5>Are you sure?</h5>
 <p>If you really want to delete your account please confirm below. We will email you further instructions on how to
     proceed.</p>
+@if(!ViewData.ModelState.IsValid)
+{
+    <i>There was a technical error, please try again later.</i>
+}
 <form 
     class="section" 
     asp-controller="Unregister" 

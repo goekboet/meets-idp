@@ -163,7 +163,7 @@ passwordControl state =
             , onClick (ChangePasswordState (ChangePasswordInput cp np pr True))] 
             [ Html.text "Change"]
     PasswordPending ->
-        Html.button [ disabled True] [ Html.text "Pending" ]
+        spinner
     PasswordError ->
         Html.button [ disabled True] [ Html.text "Error" ]
 
@@ -282,7 +282,7 @@ nameControl state =
               ] 
               [ Html.text (nameButtonLabel on) ]
     NamePending -> 
-        Html.button [ class "btn",  disabled True ] [ Html.text "Pending" ]
+        spinner
     NameError -> 
         Html.button [ class "btn",  disabled True ] [ Html.text "Error" ]
 
@@ -470,6 +470,12 @@ renderError : List (Html msg)
 renderError =
     [ Html.h2 [] [ Html.text "Error" ]
     , Html.p [] [ Html.text "You can try reloading the page."]
+    ]
+
+spinner : Html Msg
+spinner =
+    Html.div [ class "progress" ] 
+    [ Html.div [ class "indeterminate" ] []
     ]
 
 view : Model -> Document Msg

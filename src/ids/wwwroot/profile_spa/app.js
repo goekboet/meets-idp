@@ -11579,6 +11579,22 @@ var $author$project$Main$nameInput = F2(
 			value: nn
 		};
 	});
+var $author$project$Main$spinner = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('progress')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('indeterminate')
+				]),
+			_List_Nil)
+		]));
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -11674,17 +11690,7 @@ var $author$project$Main$nameControl = function (state) {
 						]));
 			}
 		case 'NamePending':
-			return A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('btn'),
-						$elm$html$Html$Attributes$disabled(true)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Pending')
-					]));
+			return $author$project$Main$spinner;
 		default:
 			return A2(
 				$elm$html$Html$button,
@@ -11891,16 +11897,7 @@ var $author$project$Main$passwordControl = function (state) {
 						]));
 			}
 		case 'PasswordPending':
-			return A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$disabled(true)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Pending')
-					]));
+			return $author$project$Main$spinner;
 		default:
 			return A2(
 				$elm$html$Html$button,
