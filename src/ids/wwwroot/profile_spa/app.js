@@ -10712,7 +10712,7 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Pending = {$: 'Pending'};
+var $author$project$Main$Uninitialized = {$: 'Uninitialized'};
 var $author$project$Main$GotProfile = function (a) {
 	return {$: 'GotProfile', a: a};
 };
@@ -10735,14 +10735,14 @@ var $elm$url$Url$Builder$absolute = F2(
 	function (pathSegments, parameters) {
 		return '/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters));
 	});
-var $author$project$Main$Profile = F3(
+var $author$project$Model$Profile = F3(
 	function (name, email, hasPassword) {
 		return {email: email, hasPassword: hasPassword, name: name};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Main$decodeProfile = A4(
 	$elm$json$Json$Decode$map3,
-	$author$project$Main$Profile,
+	$author$project$Model$Profile,
 	A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'email', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'hasPassword', $elm$json$Json$Decode$bool));
@@ -11003,13 +11003,9 @@ var $author$project$Main$fetchProfile = $elm$http$Http$get(
 				['api', 'profile']),
 			_List_Nil)
 	});
-var $author$project$Main$NameUnavailiable = {$: 'NameUnavailiable'};
-var $author$project$Main$initNameState = $author$project$Main$NameUnavailiable;
-var $author$project$Main$PasswordUnavailiable = {$: 'PasswordUnavailiable'};
-var $author$project$Main$initPasswordState = $author$project$Main$PasswordUnavailiable;
 var $author$project$Main$init = function (f) {
 	return _Utils_Tuple2(
-		{antiCsrf: f.antiCsrf, name: $author$project$Main$initNameState, oidcLogin: f.oidcLogin, password: $author$project$Main$initPasswordState, profile: $author$project$Main$Pending},
+		{antiCsrf: f.antiCsrf, faulty: false, oidcLogin: f.oidcLogin, profileCompletion: $author$project$Main$Uninitialized},
 		$author$project$Main$fetchProfile);
 };
 var $elm$json$Json$Decode$null = _Json_decodeNull;
@@ -11019,114 +11015,61 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
-var $author$project$Main$Errored = {$: 'Errored'};
-var $author$project$Main$NameError = {$: 'NameError'};
-var $author$project$Main$NamePending = {$: 'NamePending'};
-var $author$project$Main$PasswordError = {$: 'PasswordError'};
-var $author$project$Main$PasswordPending = {$: 'PasswordPending'};
-var $author$project$Main$Received = function (a) {
-	return {$: 'Received', a: a};
+var $author$project$Main$AddingName = F2(
+	function (a, b) {
+		return {$: 'AddingName', a: a, b: b};
+	});
+var $author$project$Main$AddingPassword = F2(
+	function (a, b) {
+		return {$: 'AddingPassword', a: a, b: b};
+	});
+var $author$project$Main$ChangePwdMsg = function (a) {
+	return {$: 'ChangePwdMsg', a: a};
 };
-var $author$project$Main$NameInput = F3(
-	function (a, b, c) {
-		return {$: 'NameInput', a: a, b: b, c: c};
+var $author$project$Main$ChangingPassword = F2(
+	function (a, b) {
+		return {$: 'ChangingPassword', a: a, b: b};
 	});
-var $author$project$Main$profileNamestate = function (p) {
-	return A3($author$project$Main$NameInput, p.name, '', false);
+var $author$project$Main$NewNameMsg = function (a) {
+	return {$: 'NewNameMsg', a: a};
 };
-var $author$project$Main$AddPasswordInput = F3(
-	function (a, b, c) {
-		return {$: 'AddPasswordInput', a: a, b: b, c: c};
-	});
-var $author$project$Main$ChangePasswordInput = F4(
-	function (a, b, c, d) {
-		return {$: 'ChangePasswordInput', a: a, b: b, c: c, d: d};
-	});
-var $author$project$Main$profilePasswordState = function (p) {
-	return p.hasPassword ? A4($author$project$Main$ChangePasswordInput, '', '', '', false) : A3($author$project$Main$AddPasswordInput, '', '', false);
+var $author$project$Main$NewPwdMsg = function (a) {
+	return {$: 'NewPwdMsg', a: a};
 };
-var $author$project$Main$refresh = F2(
-	function (p, m) {
-		return {
-			antiCsrf: m.antiCsrf,
-			name: $author$project$Main$profileNamestate(p),
-			oidcLogin: m.oidcLogin,
-			password: $author$project$Main$profilePasswordState(p),
-			profile: $author$project$Main$Received(p)
-		};
-	});
-var $author$project$Main$setAddNewPassword = F2(
-	function (state, s) {
-		if (state.$ === 'AddPasswordInput') {
-			var pr = state.b;
-			var a = state.c;
-			return A3($author$project$Main$AddPasswordInput, s, pr, a);
+var $author$project$Main$ProfileComplete = function (a) {
+	return {$: 'ProfileComplete', a: a};
+};
+var $author$project$NewName$CollectingInput = {$: 'CollectingInput'};
+var $author$project$NewName$init = _Utils_Tuple2($author$project$NewName$CollectingInput, '');
+var $author$project$NewPassword$CollectingInput = {$: 'CollectingInput'};
+var $author$project$NewPassword$init = _Utils_Tuple2(
+	$author$project$NewPassword$CollectingInput,
+	{newPassword: '', passwordRepeat: ''});
+var $author$project$Main$getProfileCompletion = function (p) {
+	var _v0 = _Utils_Tuple2(p.name, p.hasPassword);
+	if (!_v0.b) {
+		return A2($author$project$Main$AddingPassword, p, $author$project$NewPassword$init);
+	} else {
+		if (_v0.a === '') {
+			return A2($author$project$Main$AddingName, p, $author$project$NewName$init);
 		} else {
-			return state;
+			return $author$project$Main$ProfileComplete(p);
 		}
-	});
-var $author$project$Main$setAddNewPasswordRepeat = F2(
-	function (state, s) {
-		if (state.$ === 'AddPasswordInput') {
-			var np = state.a;
-			var a = state.c;
-			return A3($author$project$Main$AddPasswordInput, np, s, a);
-		} else {
-			return state;
-		}
-	});
-var $author$project$Main$setChangeCurrentPwd = F2(
-	function (state, s) {
-		if (state.$ === 'ChangePasswordInput') {
-			var np = state.b;
-			var pr = state.c;
-			var a = state.d;
-			return A4($author$project$Main$ChangePasswordInput, s, np, pr, a);
-		} else {
-			return state;
-		}
-	});
-var $author$project$Main$setChangeNewPwd = F2(
-	function (state, s) {
-		if (state.$ === 'ChangePasswordInput') {
-			var cp = state.a;
-			var pr = state.c;
-			var a = state.d;
-			return A4($author$project$Main$ChangePasswordInput, cp, s, pr, a);
-		} else {
-			return state;
-		}
-	});
-var $author$project$Main$setChangePwdRepeat = F2(
-	function (state, s) {
-		if (state.$ === 'ChangePasswordInput') {
-			var cp = state.a;
-			var np = state.b;
-			var a = state.d;
-			return A4($author$project$Main$ChangePasswordInput, cp, np, s, a);
-		} else {
-			return state;
-		}
-	});
-var $author$project$Main$setNewNameInput = F2(
-	function (state, s) {
-		if (state.$ === 'NameInput') {
-			var on = state.a;
-			var a = state.c;
-			return A3($author$project$Main$NameInput, on, s, a);
-		} else {
-			return state;
-		}
-	});
-var $author$project$Main$AddPwdResponse = function (a) {
-	return {$: 'AddPwdResponse', a: a};
+	}
+};
+var $author$project$ChangePassword$CollectingInput = {$: 'CollectingInput'};
+var $author$project$ChangePassword$emptyInput = {currentPassword: '', newPassword: '', newPasswordRepeat: ''};
+var $author$project$ChangePassword$init = _Utils_Tuple2($author$project$ChangePassword$CollectingInput, $author$project$ChangePassword$emptyInput);
+var $author$project$ChangePassword$Errored = {$: 'Errored'};
+var $author$project$ChangePassword$PasswordChanged = function (a) {
+	return {$: 'PasswordChanged', a: a};
 };
 var $elm$http$Http$Header = F2(
 	function (a, b) {
 		return {$: 'Header', a: a, b: b};
 	});
 var $elm$http$Http$header = $elm$http$Http$Header;
-var $author$project$Main$antiCsrfHeader = function (t) {
+var $author$project$ChangePassword$antiCsrfHeader = function (t) {
 	return A2($elm$http$Http$header, 'RequestVerificationToken', t);
 };
 var $elm$http$Http$expectBytesResponse = F2(
@@ -11152,113 +11095,29 @@ var $elm$http$Http$jsonBody = function (value) {
 		'application/json',
 		A2($elm$json$Json$Encode$encode, 0, value));
 };
-var $author$project$Main$passwordJson = function (pwd) {
+var $author$project$ChangePassword$toJson = function (inp) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
 				_Utils_Tuple2(
-				'password',
-				$elm$json$Json$Encode$string(pwd))
-			]));
-};
-var $author$project$Main$addPasswordApiCall = F2(
-	function (t, pwd) {
-		return $elm$http$Http$request(
-			{
-				body: $elm$http$Http$jsonBody(
-					$author$project$Main$passwordJson(pwd)),
-				expect: $elm$http$Http$expectWhatever($author$project$Main$AddPwdResponse),
-				headers: _List_fromArray(
-					[
-						$author$project$Main$antiCsrfHeader(t)
-					]),
-				method: 'post',
-				timeout: $elm$core$Maybe$Nothing,
-				tracker: $elm$core$Maybe$Nothing,
-				url: A2(
-					$elm$url$Url$Builder$absolute,
-					_List_fromArray(
-						['api', 'profile', 'password']),
-					_List_Nil)
-			});
-	});
-var $author$project$Main$submitAddPassword = F2(
-	function (anticsrf, state) {
-		if (state.$ === 'AddPasswordInput') {
-			var np = state.a;
-			return A2($author$project$Main$addPasswordApiCall, anticsrf, np);
-		} else {
-			return $elm$core$Platform$Cmd$none;
-		}
-	});
-var $author$project$Main$ChangeNameResponse = function (a) {
-	return {$: 'ChangeNameResponse', a: a};
-};
-var $author$project$Main$nameJson = function (n) {
-	return $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
+				'old',
+				$elm$json$Json$Encode$string(inp.currentPassword)),
 				_Utils_Tuple2(
-				'name',
-				$elm$json$Json$Encode$string(n))
+				'new',
+				$elm$json$Json$Encode$string(inp.newPassword))
 			]));
 };
-var $author$project$Main$changeNameApiCall = F2(
-	function (t, nn) {
+var $author$project$ChangePassword$changePasswordApiCall = F3(
+	function (t, toApp, inp) {
 		return $elm$http$Http$request(
 			{
 				body: $elm$http$Http$jsonBody(
-					$author$project$Main$nameJson(nn)),
-				expect: $elm$http$Http$expectWhatever($author$project$Main$ChangeNameResponse),
+					$author$project$ChangePassword$toJson(inp)),
+				expect: $elm$http$Http$expectWhatever(
+					A2($elm$core$Basics$composeL, toApp, $author$project$ChangePassword$PasswordChanged)),
 				headers: _List_fromArray(
 					[
-						$author$project$Main$antiCsrfHeader(t)
-					]),
-				method: 'post',
-				timeout: $elm$core$Maybe$Nothing,
-				tracker: $elm$core$Maybe$Nothing,
-				url: A2(
-					$elm$url$Url$Builder$absolute,
-					_List_fromArray(
-						['api', 'profile', 'name']),
-					_List_Nil)
-			});
-	});
-var $author$project$Main$submitChangeName = F2(
-	function (anticsrf, state) {
-		if (state.$ === 'NameInput') {
-			var nn = state.b;
-			return A2($author$project$Main$changeNameApiCall, anticsrf, nn);
-		} else {
-			return $elm$core$Platform$Cmd$none;
-		}
-	});
-var $author$project$Main$ChangePwdResponse = function (a) {
-	return {$: 'ChangePwdResponse', a: a};
-};
-var $author$project$Main$changePasswordJson = F2(
-	function (current, _new) {
-		return $elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'old',
-					$elm$json$Json$Encode$string(current)),
-					_Utils_Tuple2(
-					'new',
-					$elm$json$Json$Encode$string(_new))
-				]));
-	});
-var $author$project$Main$changePasswordApiCall = F3(
-	function (t, cp, np) {
-		return $elm$http$Http$request(
-			{
-				body: $elm$http$Http$jsonBody(
-					A2($author$project$Main$changePasswordJson, cp, np)),
-				expect: $elm$http$Http$expectWhatever($author$project$Main$ChangePwdResponse),
-				headers: _List_fromArray(
-					[
-						$author$project$Main$antiCsrfHeader(t)
+						$author$project$ChangePassword$antiCsrfHeader(t)
 					]),
 				method: 'post',
 				timeout: $elm$core$Maybe$Nothing,
@@ -11270,14 +11129,256 @@ var $author$project$Main$changePasswordApiCall = F3(
 					_List_Nil)
 			});
 	});
-var $author$project$Main$submitChangePassword = F2(
-	function (anticsrf, state) {
-		if (state.$ === 'ChangePasswordInput') {
-			var cp = state.a;
-			var np = state.b;
-			return A3($author$project$Main$changePasswordApiCall, anticsrf, cp, np);
-		} else {
-			return $elm$core$Platform$Cmd$none;
+var $author$project$ChangePassword$updateCurrentPassword = F2(
+	function (_v0, pwd) {
+		var inp = _v0.b;
+		return _Utils_Tuple2(
+			$author$project$ChangePassword$CollectingInput,
+			_Utils_update(
+				inp,
+				{currentPassword: pwd}));
+	});
+var $author$project$ChangePassword$updateNewPassword = F2(
+	function (_v0, pwd) {
+		var inp = _v0.b;
+		return _Utils_Tuple2(
+			$author$project$ChangePassword$CollectingInput,
+			_Utils_update(
+				inp,
+				{newPassword: pwd}));
+	});
+var $author$project$ChangePassword$updateRepeatedPassword = F2(
+	function (_v0, pwd) {
+		var inp = _v0.b;
+		return _Utils_Tuple2(
+			$author$project$ChangePassword$CollectingInput,
+			_Utils_update(
+				inp,
+				{newPasswordRepeat: pwd}));
+	});
+var $author$project$ChangePassword$update = F4(
+	function (t, toApp, msg, model) {
+		switch (msg.$) {
+			case 'Noop':
+				return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, false);
+			case 'CurrentPasswordInputChanged':
+				var pwd = msg.a;
+				return _Utils_Tuple3(
+					A2($author$project$ChangePassword$updateCurrentPassword, model, pwd),
+					$elm$core$Platform$Cmd$none,
+					false);
+			case 'NewPasswordInputChanged':
+				var pwd = msg.a;
+				return _Utils_Tuple3(
+					A2($author$project$ChangePassword$updateNewPassword, model, pwd),
+					$elm$core$Platform$Cmd$none,
+					false);
+			case 'NewPasswordRepeatChanged':
+				var pwd = msg.a;
+				return _Utils_Tuple3(
+					A2($author$project$ChangePassword$updateRepeatedPassword, model, pwd),
+					$elm$core$Platform$Cmd$none,
+					false);
+			case 'SubmitPasswordChange':
+				return _Utils_Tuple3(
+					model,
+					A3($author$project$ChangePassword$changePasswordApiCall, t, toApp, model.b),
+					false);
+			case 'PasswordChanged':
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, true);
+				} else {
+					return _Utils_Tuple3(
+						_Utils_Tuple2($author$project$ChangePassword$Errored, model.b),
+						$elm$core$Platform$Cmd$none,
+						false);
+				}
+			default:
+				return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, true);
+		}
+	});
+var $author$project$NewName$Errored = {$: 'Errored'};
+var $author$project$NewName$Pending = {$: 'Pending'};
+var $author$project$NewName$Submitted = {$: 'Submitted'};
+var $author$project$NewName$SubmitNameResponse = function (a) {
+	return {$: 'SubmitNameResponse', a: a};
+};
+var $author$project$NewName$antiCsrfHeader = function (t) {
+	return A2($elm$http$Http$header, 'RequestVerificationToken', t);
+};
+var $author$project$NewName$nameJson = function (n) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'name',
+				$elm$json$Json$Encode$string(n))
+			]));
+};
+var $author$project$NewName$changeNameApiCall = F3(
+	function (t, toApp, nn) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					$author$project$NewName$nameJson(nn)),
+				expect: $elm$http$Http$expectWhatever(
+					A2($elm$core$Basics$composeL, toApp, $author$project$NewName$SubmitNameResponse)),
+				headers: _List_fromArray(
+					[
+						$author$project$NewName$antiCsrfHeader(t)
+					]),
+				method: 'post',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: A2(
+					$elm$url$Url$Builder$absolute,
+					_List_fromArray(
+						['api', 'profile', 'name']),
+					_List_Nil)
+			});
+	});
+var $author$project$NewName$update = F4(
+	function (anticsrf, toApp, msg, _v0) {
+		var api = _v0.a;
+		var inp = _v0.b;
+		switch (msg.$) {
+			case 'NameInputChanged':
+				var s = msg.a;
+				return _Utils_Tuple3(
+					_Utils_Tuple2(api, s),
+					$elm$core$Platform$Cmd$none,
+					'');
+			case 'SubmitName':
+				return _Utils_Tuple3(
+					_Utils_Tuple2($author$project$NewName$Pending, inp),
+					A3($author$project$NewName$changeNameApiCall, anticsrf, toApp, inp),
+					'');
+			case 'SubmitNameResponse':
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple3(
+						_Utils_Tuple2($author$project$NewName$Submitted, inp),
+						$elm$core$Platform$Cmd$none,
+						inp);
+				} else {
+					var e = msg.a.a;
+					return _Utils_Tuple3(
+						_Utils_Tuple2($author$project$NewName$Errored, inp),
+						$elm$core$Platform$Cmd$none,
+						'');
+				}
+			default:
+				return _Utils_Tuple3(
+					_Utils_Tuple2(api, inp),
+					$elm$core$Platform$Cmd$none,
+					'');
+		}
+	});
+var $author$project$NewPassword$Error = {$: 'Error'};
+var $author$project$NewPassword$Pending = {$: 'Pending'};
+var $author$project$NewPassword$AddPasswordResponse = function (a) {
+	return {$: 'AddPasswordResponse', a: a};
+};
+var $author$project$NewPassword$antiCsrfHeader = function (t) {
+	return A2($elm$http$Http$header, 'RequestVerificationToken', t);
+};
+var $author$project$NewPassword$passwordJson = function (pwd) {
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'password',
+				$elm$json$Json$Encode$string(pwd))
+			]));
+};
+var $author$project$NewPassword$addPasswordApiCall = F3(
+	function (t, toApp, _v0) {
+		var newPassword = _v0.newPassword;
+		var passwordRepeat = _v0.passwordRepeat;
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					$author$project$NewPassword$passwordJson(newPassword)),
+				expect: $elm$http$Http$expectWhatever(
+					A2($elm$core$Basics$composeL, toApp, $author$project$NewPassword$AddPasswordResponse)),
+				headers: _List_fromArray(
+					[
+						$author$project$NewPassword$antiCsrfHeader(t)
+					]),
+				method: 'post',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: A2(
+					$elm$url$Url$Builder$absolute,
+					_List_fromArray(
+						['api', 'profile', 'password']),
+					_List_Nil)
+			});
+	});
+var $author$project$NewPassword$setNewPassword = F2(
+	function (pwd, _v0) {
+		var s = _v0.a;
+		var inp = _v0.b;
+		return _Utils_Tuple2(
+			s,
+			_Utils_update(
+				inp,
+				{newPassword: pwd}));
+	});
+var $author$project$NewPassword$setPwdRepeat = F2(
+	function (pwd, _v0) {
+		var s = _v0.a;
+		var inp = _v0.b;
+		return _Utils_Tuple2(
+			s,
+			_Utils_update(
+				inp,
+				{passwordRepeat: pwd}));
+	});
+var $author$project$NewPassword$update = F4(
+	function (anticsrf, toApp, msg, _v0) {
+		var api = _v0.a;
+		var inp = _v0.b;
+		switch (msg.$) {
+			case 'NewPasswordChange':
+				var s = msg.a;
+				return _Utils_Tuple3(
+					A2(
+						$author$project$NewPassword$setNewPassword,
+						s,
+						_Utils_Tuple2(api, inp)),
+					$elm$core$Platform$Cmd$none,
+					false);
+			case 'PasswordRepeatChange':
+				var s = msg.a;
+				return _Utils_Tuple3(
+					A2(
+						$author$project$NewPassword$setPwdRepeat,
+						s,
+						_Utils_Tuple2(api, inp)),
+					$elm$core$Platform$Cmd$none,
+					false);
+			case 'SubmitAddPassword':
+				return _Utils_Tuple3(
+					_Utils_Tuple2($author$project$NewPassword$Pending, inp),
+					A3($author$project$NewPassword$addPasswordApiCall, anticsrf, toApp, inp),
+					false);
+			case 'AddPasswordResponse':
+				if (msg.a.$ === 'Ok') {
+					return _Utils_Tuple3(
+						_Utils_Tuple2(api, inp),
+						$elm$core$Platform$Cmd$none,
+						true);
+				} else {
+					return _Utils_Tuple3(
+						_Utils_Tuple2($author$project$NewPassword$Error, inp),
+						$elm$core$Platform$Cmd$none,
+						false);
+				}
+			default:
+				return _Utils_Tuple3(
+					_Utils_Tuple2(api, inp),
+					$elm$core$Platform$Cmd$none,
+					false);
 		}
 	});
 var $author$project$Main$update = F2(
@@ -11289,165 +11390,103 @@ var $author$project$Main$update = F2(
 				if (msg.a.$ === 'Ok') {
 					var p = msg.a.a;
 					return _Utils_Tuple2(
-						A2($author$project$Main$refresh, p, model),
+						_Utils_update(
+							model,
+							{
+								profileCompletion: $author$project$Main$getProfileCompletion(p)
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{profile: $author$project$Main$Errored}),
+							{faulty: true}),
 						$elm$core$Platform$Cmd$none);
 				}
-			case 'ChangePasswordState':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{password: s}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangeNameState':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{name: s}),
-					$elm$core$Platform$Cmd$none);
-			case 'AddPwdNew':
-				var s = msg.a;
+			case 'ChangePassword':
+				var p = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							password: A2($author$project$Main$setAddNewPassword, model.password, s)
+							profileCompletion: A2($author$project$Main$ChangingPassword, p, $author$project$ChangePassword$init)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 'AddPwdRepeat':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							password: A2($author$project$Main$setAddNewPasswordRepeat, model.password, s)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'AddPwdSubmit':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{password: $author$project$Main$PasswordPending}),
-					A2($author$project$Main$submitAddPassword, model.antiCsrf, model.password));
-			case 'AddPwdResponse':
-				if (msg.a.$ === 'Ok') {
+			case 'NewPwdMsg':
+				var m = msg.a;
+				var _v1 = model.profileCompletion;
+				if (_v1.$ === 'AddingPassword') {
+					var profile = _v1.a;
+					var newPwdModel = _v1.b;
+					var _v2 = A4($author$project$NewPassword$update, model.antiCsrf, $author$project$Main$NewPwdMsg, m, newPwdModel);
+					var newPwdModel_ = _v2.a;
+					var cmd = _v2.b;
+					var done = _v2.c;
+					var nextStep = done ? $author$project$Main$getProfileCompletion(
+						_Utils_update(
+							profile,
+							{hasPassword: true})) : A2($author$project$Main$AddingPassword, profile, newPwdModel_);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{password: $author$project$Main$PasswordUnavailiable}),
-						$author$project$Main$fetchProfile);
+							{profileCompletion: nextStep}),
+						cmd);
 				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{password: $author$project$Main$PasswordError}),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 'ChangePwdCurrent':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							password: A2($author$project$Main$setChangeCurrentPwd, model.password, s)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangePwdNew':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							password: A2($author$project$Main$setChangeNewPwd, model.password, s)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangePwdRepeat':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							password: A2($author$project$Main$setChangePwdRepeat, model.password, s)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangePwdSubmit':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{password: $author$project$Main$PasswordPending}),
-					A2($author$project$Main$submitChangePassword, model.antiCsrf, model.password));
-			case 'ChangePwdResponse':
-				if (msg.a.$ === 'Ok') {
+			case 'NewNameMsg':
+				var m = msg.a;
+				var _v3 = model.profileCompletion;
+				if (_v3.$ === 'AddingName') {
+					var profile = _v3.a;
+					var newNameModel = _v3.b;
+					var _v4 = A4($author$project$NewName$update, model.antiCsrf, $author$project$Main$NewNameMsg, m, newNameModel);
+					var newNameModel_ = _v4.a;
+					var cmd = _v4.b;
+					var name = _v4.c;
+					var nextStep = (name !== '') ? $author$project$Main$getProfileCompletion(
+						_Utils_update(
+							profile,
+							{name: name})) : A2($author$project$Main$AddingName, profile, newNameModel_);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{password: $author$project$Main$PasswordUnavailiable}),
-						$author$project$Main$fetchProfile);
+							{profileCompletion: nextStep}),
+						cmd);
 				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{password: $author$project$Main$PasswordError}),
-						$elm$core$Platform$Cmd$none);
-				}
-			case 'ChangeNameNew':
-				var s = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							name: A2($author$project$Main$setNewNameInput, model.name, s)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'ChangeNameResponse':
-				if (msg.a.$ === 'Ok') {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{name: $author$project$Main$NameUnavailiable}),
-						$author$project$Main$fetchProfile);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{name: $author$project$Main$NameError}),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{name: $author$project$Main$NamePending}),
-					A2($author$project$Main$submitChangeName, model.antiCsrf, model.name));
+				var m = msg.a;
+				var _v5 = model.profileCompletion;
+				if (_v5.$ === 'ChangingPassword') {
+					var profile = _v5.a;
+					var changePwdModel = _v5.b;
+					var _v6 = A4($author$project$ChangePassword$update, model.antiCsrf, $author$project$Main$ChangePwdMsg, m, changePwdModel);
+					var changePwdModel_ = _v6.a;
+					var cmd = _v6.b;
+					var done = _v6.c;
+					var nextStep = done ? $author$project$Main$getProfileCompletion(
+						_Utils_update(
+							profile,
+							{hasPassword: true})) : A2($author$project$Main$ChangingPassword, profile, changePwdModel_);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{profileCompletion: nextStep}),
+						cmd);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $author$project$Main$renderError = _List_fromArray(
-	[
-		A2(
-		$elm$html$Html$h2,
-		_List_Nil,
-		_List_fromArray(
-			[
-				$elm$html$Html$text('Error')
-			])),
-		A2(
-		$elm$html$Html$p,
-		_List_Nil,
-		_List_fromArray(
-			[
-				$elm$html$Html$text('You can try reloading the page.')
-			]))
-	]);
-var $elm$html$Html$h5 = _VirtualDom_node('h5');
+var $author$project$Components$Applicable = {$: 'Applicable'};
+var $author$project$Main$ChangePassword = function (a) {
+	return {$: 'ChangePassword', a: a};
+};
+var $author$project$Components$Complete = {$: 'Complete'};
+var $author$project$Main$Noop = {$: 'Noop'};
+var $author$project$Components$NotApplicable = {$: 'NotApplicable'};
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -11458,35 +11497,35 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $author$project$Main$internalLink = F3(
-	function (login, url, name) {
-		var returnUrl = A2(
-			$elm$core$Maybe$withDefault,
-			'',
-			A2(
-				$elm$core$Maybe$map,
-				function ($) {
-					return $.id;
-				},
-				login));
+var $author$project$Components$completionProgress = F5(
+	function (email, password, name, complete, _delete) {
+		var listitem = function (i) {
+			return A2(
+				$elm$html$Html$li,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('collection-item')
+					]),
+				i);
+		};
 		return A2(
-			$elm$html$Html$a,
+			$elm$html$Html$ul,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href(url)
+					$elm$html$Html$Attributes$class('collection profile-completion')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(name)
+					listitem(email),
+					listitem(password),
+					listitem(name),
+					listitem(complete),
+					A2(
+					$elm$core$Maybe$withDefault,
+					$elm$html$Html$text(''),
+					A2($elm$core$Maybe$map, listitem, _delete))
 				]));
 	});
-var $author$project$Main$ChangeNameNew = function (a) {
-	return {$: 'ChangeNameNew', a: a};
-};
-var $author$project$Main$ChangeNameState = function (a) {
-	return {$: 'ChangeNameState', a: a};
-};
-var $author$project$Main$ChangeNameSubmit = {$: 'ChangeNameSubmit'};
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -11496,22 +11535,253 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $author$project$Components$changeButton = F2(
+	function (status, m) {
+		switch (status.$) {
+			case 'NotApplicable':
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn-flat'),
+							A2($elm$html$Html$Attributes$style, 'visibility', 'hidden')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Change')
+						]));
+			case 'Changing':
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn-flat'),
+							$elm$html$Html$Attributes$disabled(true)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Change')
+						]));
+			default:
+				return A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn-flat'),
+							$elm$html$Html$Events$onClick(m)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Change')
+						]));
+		}
+	});
 var $elm$html$Html$i = _VirtualDom_node('i');
+var $author$project$Components$stepIcon = function (status) {
+	var icon = function (s) {
+		return A2(
+			$elm$html$Html$i,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('material-icons')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(s)
+				]));
+	};
+	switch (status.$) {
+		case 'Complete':
+			return icon('check_box');
+		case 'Current':
+			return icon('chevron_right');
+		default:
+			return icon('check_box_outline_blank');
+	}
+};
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $author$project$Components$stepName = function (name) {
+	return A2(
+		$elm$html$Html$label,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('name')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(name)
+			]));
+};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $author$project$Components$stepOutcome = F2(
+	function (outcome, status) {
+		var style = function (s) {
+			if (s.$ === 'Current') {
+				return _List_fromArray(
+					[
+						_Utils_Tuple2('status', true),
+						_Utils_Tuple2('black-text', true)
+					]);
+			} else {
+				return _List_fromArray(
+					[
+						_Utils_Tuple2('status', true),
+						_Utils_Tuple2('black-text', false)
+					]);
+			}
+		};
+		var labelText = function (o) {
+			return A2(
+				$elm$core$Maybe$withDefault,
+				$elm$html$Html$text(''),
+				A2($elm$core$Maybe$map, $elm$html$Html$text, o));
+		};
+		return A2(
+			$elm$html$Html$label,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$classList(
+					style(status)),
+					A2($elm$html$Html$Attributes$style, 'flex-grow', '1')
+				]),
+			_List_fromArray(
+				[
+					labelText(outcome)
+				]));
+	});
+var $author$project$Components$completionStep = F5(
+	function (stepS, changeS, m, stepN, stepO) {
+		return _List_fromArray(
+			[
+				$author$project$Components$stepIcon(stepS),
+				$author$project$Components$stepName(stepN),
+				A2($author$project$Components$stepOutcome, stepO, stepS),
+				A2($author$project$Components$changeButton, changeS, m)
+			]);
+	});
+var $author$project$Main$completionStatus = F2(
+	function (p, m) {
+		return A5(
+			$author$project$Components$completionProgress,
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Applicable,
+				$author$project$Main$Noop,
+				'Email',
+				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Applicable,
+				$author$project$Main$ChangePassword(p),
+				'Password',
+				$elm$core$Maybe$Just('added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Applicable,
+				$author$project$Main$Noop,
+				'Name',
+				$elm$core$Maybe$Just(p.name)),
+			A5($author$project$Components$completionStep, $author$project$Components$Complete, $author$project$Components$NotApplicable, $author$project$Main$Noop, 'Profile complete', $elm$core$Maybe$Nothing),
+			$elm$core$Maybe$Nothing);
+	});
+var $elm$html$Html$h5 = _VirtualDom_node('h5');
+var $author$project$Main$oidcLogin = function (m) {
+	var _v0 = m.oidcLogin;
+	if (_v0.$ === 'Just') {
+		var login = _v0.a;
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('btn'),
+					$elm$html$Html$Attributes$href(login.id)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Login')
+				]));
+	} else {
+		return $elm$html$Html$text('');
+	}
+};
+var $author$project$Main$completeView = F2(
+	function (p, m) {
+		return _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h5,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Profile complete')
+					])),
+				A2($author$project$Main$completionStatus, p, m),
+				$author$project$Main$oidcLogin(m)
+			]);
+	});
+var $author$project$ChangePassword$CurrentPasswordInputChanged = function (a) {
+	return {$: 'CurrentPasswordInputChanged', a: a};
+};
+var $author$project$ChangePassword$NewPasswordInputChanged = function (a) {
+	return {$: 'NewPasswordInputChanged', a: a};
+};
+var $author$project$ChangePassword$NewPasswordRepeatChanged = function (a) {
+	return {$: 'NewPasswordRepeatChanged', a: a};
+};
+var $author$project$ChangePassword$PasswordChangeCanceled = {$: 'PasswordChangeCanceled'};
+var $author$project$ChangePassword$SubmitPasswordChange = {$: 'SubmitPasswordChange'};
+var $author$project$ChangePassword$apistatusRejection = function (s) {
+	if (s.$ === 'Errored') {
+		return 'This is not the current password';
+	} else {
+		return '';
+	}
+};
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
-var $author$project$Main$inputLabel = F2(
-	function (title, dirty) {
-		return dirty ? $elm$core$String$concat(
-			_List_fromArray(
-				[title, ' ', '*'])) : title;
-	});
-var $elm$html$Html$label = _VirtualDom_node('label');
+var $author$project$ChangePassword$currentPasswordInput = {autofocus: true, icon: 'lock_open', id: 'CurrentPwd', label: 'Current password', tabindex: 1, type_: 'password'};
+var $elm$html$Html$Attributes$autofocus = $elm$html$Html$Attributes$boolProperty('autofocus');
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $author$project$Main$input = F6(
-	function (icon_name, n, d, t, inp, change) {
+var $elm$html$Html$Attributes$tabindex = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'tabIndex',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Components$input = F4(
+	function (_v0, dirty, validation, msg) {
+		var id = _v0.id;
+		var type_ = _v0.type_;
+		var icon = _v0.icon;
+		var label = _v0.label;
+		var tabindex = _v0.tabindex;
+		var autofocus = _v0.autofocus;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -11528,17 +11798,19 @@ var $author$project$Main$input = F6(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(icon_name)
+							$elm$html$Html$text(icon)
 						])),
 					A2(
 					$elm$html$Html$input,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('validate'),
-							$elm$html$Html$Attributes$placeholder(d),
-							$elm$html$Html$Attributes$name(n),
-							$elm$html$Html$Attributes$type_(t),
-							$elm$html$Html$Events$onInput(change)
+							$elm$html$Html$Attributes$placeholder(label),
+							$elm$html$Html$Attributes$name(id),
+							$elm$html$Html$Attributes$type_(type_),
+							$elm$html$Html$Attributes$tabindex(tabindex),
+							$elm$html$Html$Attributes$autofocus(autofocus),
+							$elm$html$Html$Events$onInput(msg)
 						]),
 					_List_Nil),
 					A2(
@@ -11546,12 +11818,14 @@ var $author$project$Main$input = F6(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('active'),
-							$elm$html$Html$Attributes$for(n)
+							$elm$html$Html$Attributes$for(id)
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($author$project$Main$inputLabel, d, inp.dirty))
+							_Utils_ap(
+								label,
+								dirty ? '*' : ''))
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -11561,403 +11835,251 @@ var $author$project$Main$input = F6(
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(inp.validationMsg)
+							$elm$html$Html$text(validation)
 						]))
 				]));
 	});
-var $author$project$Main$nameButtonLabel = function (on) {
-	return (on === '') ? 'Add' : 'Change';
+var $author$project$ChangePassword$isDirty = function (p) {
+	return p !== '';
 };
-var $author$project$Main$nameInput = F2(
-	function (on, nn) {
-		var validate = function (n) {
-			return (!$elm$core$String$length(n)) ? 'Name must not be empty.' : (($elm$core$String$length(n) > 256) ? 'Password must not be longer than 256 characters.' : '');
-		};
-		return {
-			dirty: !_Utils_eq(on, nn),
-			validationMsg: validate(nn),
-			value: nn
-		};
+var $author$project$ChangePassword$passwordInput = {autofocus: false, icon: 'lock', id: 'NewPwd', label: 'Password', tabindex: 2, type_: 'password'};
+var $author$project$ChangePassword$passwordRejection = function (newPassword) {
+	return ($elm$core$String$length(newPassword) < 8) ? 'Password must be at least 8 characters long.' : (($elm$core$String$length(newPassword) > 64) ? 'Password must not be longer than 64 characters.' : '');
+};
+var $author$project$ChangePassword$repeatPasswordInput = {autofocus: false, icon: 'lock_outline', id: 'RepeatPwd', label: 'Repeat password', tabindex: 3, type_: 'password'};
+var $author$project$ChangePassword$repeatPasswordRejection = F2(
+	function (newPassword, passwordRepeat) {
+		return (!_Utils_eq(newPassword, passwordRepeat)) ? 'Passwords don\'t match' : '';
 	});
-var $author$project$Main$spinner = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('progress')
-		]),
-	_List_fromArray(
-		[
-			A2(
+var $author$project$ChangePassword$changePasswordForm = F2(
+	function (toApp, _v0) {
+		var s = _v0.a;
+		var inp = _v0.b;
+		var pwdRepReject = A2($author$project$ChangePassword$repeatPasswordRejection, inp.newPassword, inp.newPasswordRepeat);
+		var pwdReject = $author$project$ChangePassword$passwordRejection(inp.newPassword);
+		var rejected = !$elm$core$String$isEmpty(
+			$elm$core$String$concat(
+				_List_fromArray(
+					[pwdReject, pwdRepReject])));
+		var pending = function () {
+			if (s.$ === 'Pending') {
+				return true;
+			} else {
+				return false;
+			}
+		}();
+		var currentPasswordReject = $author$project$ChangePassword$apistatusRejection(s);
+		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('indeterminate')
+					$elm$html$Html$Attributes$class('section')
 				]),
-			_List_Nil)
-		]));
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
+			_List_fromArray(
+				[
+					A4(
+					$author$project$Components$input,
+					$author$project$ChangePassword$currentPasswordInput,
+					$author$project$ChangePassword$isDirty(inp.currentPassword),
+					(currentPasswordReject !== '') ? currentPasswordReject : $author$project$ChangePassword$passwordRejection(inp.currentPassword),
+					A2($elm$core$Basics$composeL, toApp, $author$project$ChangePassword$CurrentPasswordInputChanged)),
+					A4(
+					$author$project$Components$input,
+					$author$project$ChangePassword$passwordInput,
+					$author$project$ChangePassword$isDirty(inp.newPassword),
+					$author$project$ChangePassword$passwordRejection(inp.newPassword),
+					A2($elm$core$Basics$composeL, toApp, $author$project$ChangePassword$NewPasswordInputChanged)),
+					A4(
+					$author$project$Components$input,
+					$author$project$ChangePassword$repeatPasswordInput,
+					$author$project$ChangePassword$isDirty(inp.newPasswordRepeat),
+					A2($author$project$ChangePassword$repeatPasswordRejection, inp.newPassword, inp.newPasswordRepeat),
+					A2($elm$core$Basics$composeL, toApp, $author$project$ChangePassword$NewPasswordRepeatChanged)),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn'),
+							$elm$html$Html$Attributes$name('SubmitPwd'),
+							A2($elm$html$Html$Attributes$style, 'margin-right', '0.5em'),
+							$elm$html$Html$Events$onClick(
+							toApp($author$project$ChangePassword$SubmitPasswordChange)),
+							$elm$html$Html$Attributes$disabled(rejected || pending)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Submit')
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn-flat'),
+							$elm$html$Html$Attributes$name('Cancel'),
+							$elm$html$Html$Events$onClick(
+							toApp($author$project$ChangePassword$PasswordChangeCanceled)),
+							$elm$html$Html$Attributes$disabled(pending)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Cancel')
+						]))
+				]));
+	});
+var $author$project$Components$Changing = {$: 'Changing'};
+var $author$project$ChangePassword$Noop = {$: 'Noop'};
+var $author$project$ChangePassword$completionStatus = F3(
+	function (toApp, p, m) {
+		return A5(
+			$author$project$Components$completionProgress,
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$ChangePassword$Noop),
+				'Email',
+				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Changing,
+				toApp($author$project$ChangePassword$Noop),
+				'Password',
+				$elm$core$Maybe$Just('added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Applicable,
+				toApp($author$project$ChangePassword$Noop),
+				'Name',
+				$elm$core$Maybe$Just(p.name)),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Applicable,
+				toApp($author$project$ChangePassword$Noop),
+				'Profile complete',
+				$elm$core$Maybe$Nothing),
+			$elm$core$Maybe$Nothing);
+	});
+var $author$project$ChangePassword$view = F3(
+	function (toApp, p, m) {
+		return _List_fromArray(
+			[
+				A3($author$project$ChangePassword$completionStatus, toApp, p, m),
+				A2(
+				$elm$html$Html$h5,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Change password')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('If you can, let a password manager generate a long and random one for you.')
+					])),
+				A2($author$project$ChangePassword$changePasswordForm, toApp, m)
+			]);
+	});
+var $author$project$NewName$NameInputChanged = function (a) {
+	return {$: 'NameInputChanged', a: a};
+};
+var $author$project$NewName$SubmitName = {$: 'SubmitName'};
+var $author$project$NewName$isDirty = function (i) {
+	return i !== '';
+};
+var $author$project$NewName$nameInput = {autofocus: true, icon: 'person_outline', id: 'NewName', label: 'Name', tabindex: 1, type_: 'text'};
+var $author$project$NewName$nameRejection = function (_v0) {
+	var api = _v0.a;
+	var n = _v0.b;
+	return (!$elm$core$String$length(n)) ? 'Name must not be empty.' : (($elm$core$String$length(n) > 256) ? 'Name must not be longer than 256 characters.' : '');
+};
+var $author$project$NewName$addNameForm = F2(
+	function (toApp, _v0) {
+		var api = _v0.a;
+		var inp = _v0.b;
+		var pending = function () {
+			if (api.$ === 'Pending') {
+				return true;
+			} else {
 				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
 			}
-		}
-	});
-var $author$project$Main$unSubmittable = function (inputs) {
-	return A2(
-		$elm$core$List$any,
-		function (x) {
-			return (!x.dirty) || (!$elm$core$String$isEmpty(x.validationMsg));
-		},
-		inputs);
-};
-var $author$project$Main$nameControl = function (state) {
-	switch (state.$) {
-		case 'NameUnavailiable':
-			return $elm$html$Html$text('');
-		case 'NameInput':
-			var on = state.a;
-			var nn = state.b;
-			var a = state.c;
-			if (a) {
-				var newNameInput = A2($author$project$Main$nameInput, on, nn);
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('section')
-						]),
-					_List_fromArray(
-						[
-							A6($author$project$Main$input, 'person_outline', 'NewName', 'Name', 'text', newNameInput, $author$project$Main$ChangeNameNew),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn'),
-									$elm$html$Html$Events$onClick($author$project$Main$ChangeNameSubmit),
-									$elm$html$Html$Attributes$disabled(
-									$author$project$Main$unSubmittable(
-										_List_fromArray(
-											[newNameInput])))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									$author$project$Main$nameButtonLabel(on))
-								])),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn-flat'),
-									$elm$html$Html$Events$onClick(
-									$author$project$Main$ChangeNameState(
-										A3($author$project$Main$NameInput, on, nn, false)))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Cancel')
-								]))
-						]));
-			} else {
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Main$ChangeNameState(
-								A3($author$project$Main$NameInput, on, nn, true)))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$author$project$Main$nameButtonLabel(on))
-						]));
-			}
-		case 'NamePending':
-			return $author$project$Main$spinner;
-		default:
-			return A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('btn'),
-						$elm$html$Html$Attributes$disabled(true)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Error')
-					]));
-	}
-};
-var $elm$html$Html$b = _VirtualDom_node('b');
-var $author$project$Main$nameLabel = function (on) {
-	var name = function (s) {
+		}();
+		var nameReject = $author$project$NewName$nameRejection(
+			_Utils_Tuple2(api, inp));
+		var rejected = !$elm$core$String$isEmpty(nameReject);
 		return A2(
-			$elm$html$Html$p,
-			_List_Nil,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2(
-					$elm$html$Html$b,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('name: ')
-						])),
-					$elm$html$Html$text(s)
-				]));
-	};
-	return (on !== '') ? name(on) : name('not added');
-};
-var $author$project$Main$AddPwdNew = function (a) {
-	return {$: 'AddPwdNew', a: a};
-};
-var $author$project$Main$AddPwdRepeat = function (a) {
-	return {$: 'AddPwdRepeat', a: a};
-};
-var $author$project$Main$AddPwdSubmit = {$: 'AddPwdSubmit'};
-var $author$project$Main$ChangePasswordState = function (a) {
-	return {$: 'ChangePasswordState', a: a};
-};
-var $author$project$Main$ChangePwdCurrent = function (a) {
-	return {$: 'ChangePwdCurrent', a: a};
-};
-var $author$project$Main$ChangePwdNew = function (a) {
-	return {$: 'ChangePwdNew', a: a};
-};
-var $author$project$Main$ChangePwdRepeat = function (a) {
-	return {$: 'ChangePwdRepeat', a: a};
-};
-var $author$project$Main$ChangePwdSubmit = {$: 'ChangePwdSubmit'};
-var $author$project$Main$newPwdValidation = function (pwd) {
-	return ($elm$core$String$length(pwd) < 8) ? 'Password must be at least 8 characters long.' : (($elm$core$String$length(pwd) > 64) ? 'Password must not be longer than 64 characters.' : '');
-};
-var $author$project$Main$newPwdInput = function (np) {
-	return {
-		dirty: np !== '',
-		validationMsg: $author$project$Main$newPwdValidation(np),
-		value: np
-	};
-};
-var $author$project$Main$newPwdRepeatValidation = F2(
-	function (np, pr) {
-		return _Utils_eq(np, pr) ? '' : 'Passwords don\'t match';
-	});
-var $author$project$Main$repeatPwdInput = F2(
-	function (np, pr) {
-		return {
-			dirty: pr !== '',
-			validationMsg: A2($author$project$Main$newPwdRepeatValidation, np, pr),
-			value: pr
-		};
-	});
-var $author$project$Main$passwordControl = function (state) {
-	switch (state.$) {
-		case 'PasswordUnavailiable':
-			return $elm$html$Html$text('');
-		case 'AddPasswordInput':
-			var np = state.a;
-			var pr = state.b;
-			var active = state.c;
-			if (active) {
-				var pwdRepeatInput = A2($author$project$Main$repeatPwdInput, np, pr);
-				var pwdInput = $author$project$Main$newPwdInput(np);
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('section')
-						]),
-					_List_fromArray(
-						[
-							A6($author$project$Main$input, 'lock', 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$AddPwdNew),
-							A6($author$project$Main$input, 'lock_outline', 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$AddPwdRepeat),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn'),
-									$elm$html$Html$Events$onClick($author$project$Main$AddPwdSubmit),
-									$elm$html$Html$Attributes$disabled(
-									$author$project$Main$unSubmittable(
-										_List_fromArray(
-											[pwdInput, pwdRepeatInput])))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Add')
-								])),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn-flat'),
-									$elm$html$Html$Events$onClick(
-									$author$project$Main$ChangePasswordState(
-										A3($author$project$Main$AddPasswordInput, np, pr, false)))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Cancel')
-								]))
-						]));
-			} else {
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Main$ChangePasswordState(
-								A3($author$project$Main$AddPasswordInput, np, pr, true)))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Add')
-						]));
-			}
-		case 'ChangePasswordInput':
-			var cp = state.a;
-			var np = state.b;
-			var pr = state.c;
-			var active = state.d;
-			if (active) {
-				var pwdRepeatInput = A2($author$project$Main$repeatPwdInput, np, pr);
-				var pwdInput = $author$project$Main$newPwdInput(np);
-				var currentPwdInput = $author$project$Main$newPwdInput(cp);
-				return A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('section')
-						]),
-					_List_fromArray(
-						[
-							A6($author$project$Main$input, 'lock_open', 'CurrentPwd', 'Current password', 'password', currentPwdInput, $author$project$Main$ChangePwdCurrent),
-							A6($author$project$Main$input, 'lock', 'NewPwd', 'New password', 'password', pwdInput, $author$project$Main$ChangePwdNew),
-							A6($author$project$Main$input, 'lock_outline', 'NewPwdRepeat', 'Repeat new password', 'password', pwdRepeatInput, $author$project$Main$ChangePwdRepeat),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn'),
-									$elm$html$Html$Events$onClick($author$project$Main$ChangePwdSubmit),
-									$elm$html$Html$Attributes$disabled(
-									$author$project$Main$unSubmittable(
-										_List_fromArray(
-											[currentPwdInput, pwdInput, pwdRepeatInput])))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Change')
-								])),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('btn-flat'),
-									$elm$html$Html$Events$onClick(
-									$author$project$Main$ChangePasswordState(
-										A4($author$project$Main$ChangePasswordInput, cp, np, pr, false)))
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Cancel')
-								]))
-						]));
-			} else {
-				return A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('btn'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Main$ChangePasswordState(
-								A4($author$project$Main$ChangePasswordInput, cp, np, pr, true)))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Change')
-						]));
-			}
-		case 'PasswordPending':
-			return $author$project$Main$spinner;
-		default:
-			return A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$disabled(true)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Error')
-					]));
-	}
-};
-var $author$project$Main$passwordLabel = function (has) {
-	var password = function (s) {
-		return A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$b,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('password: ')
-						])),
-					$elm$html$Html$text(s)
-				]));
-	};
-	return has ? password('added') : password('not added');
-};
-var $author$project$Main$resumeLogin = F2(
-	function (p, login) {
-		var profileIncomplete = (!p.hasPassword) || (p.name === '');
-		return profileIncomplete ? A2(
-			$elm$html$Html$a,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text(
-					$elm$core$String$concat(
-						_List_fromArray(
-							['Log in to ', login.name])))
-				])) : A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href(login.id)
+					$elm$html$Html$Attributes$class('section')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(
-					$elm$core$String$concat(
-						_List_fromArray(
-							['Log in to ', login.name])))
+					A4(
+					$author$project$Components$input,
+					$author$project$NewName$nameInput,
+					$author$project$NewName$isDirty(inp),
+					nameReject,
+					A2($elm$core$Basics$composeL, toApp, $author$project$NewName$NameInputChanged)),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn'),
+							$elm$html$Html$Attributes$name('SubmitName'),
+							$elm$html$Html$Events$onClick(
+							toApp($author$project$NewName$SubmitName)),
+							$elm$html$Html$Attributes$disabled(rejected || pending)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Submit')
+						]))
 				]));
 	});
-var $author$project$Main$renderProfile = F4(
-	function (oidcLogin, p, pwdState, nameState) {
+var $author$project$Components$Current = {$: 'Current'};
+var $author$project$Components$InComplete = {$: 'InComplete'};
+var $author$project$NewName$Noop = {$: 'Noop'};
+var $author$project$NewName$completionStatus = F3(
+	function (toApp, email, m) {
+		return A5(
+			$author$project$Components$completionProgress,
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Email',
+				$elm$core$Maybe$Just(email + ' (verified)')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Password',
+				$elm$core$Maybe$Just('added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Current,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Name',
+				$elm$core$Maybe$Just('not added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$InComplete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Profile complete',
+				$elm$core$Maybe$Nothing),
+			$elm$core$Maybe$Nothing);
+	});
+var $author$project$NewName$view = F3(
+	function (toApp, email, m) {
 		return _List_fromArray(
 			[
 				A2(
@@ -11965,41 +12087,183 @@ var $author$project$Main$renderProfile = F4(
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(p.email)
+						$elm$html$Html$text('Add name')
 					])),
-				$author$project$Main$passwordLabel(p.hasPassword),
-				$author$project$Main$passwordControl(pwdState),
-				$author$project$Main$nameLabel(p.name),
-				$author$project$Main$nameControl(nameState),
+				A3($author$project$NewName$completionStatus, toApp, email, m),
 				A2(
-				$elm$html$Html$ul,
+				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A3($author$project$Main$internalLink, oidcLogin, '/ChangeUsername', 'Change email')
-							])),
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A3($author$project$Main$internalLink, oidcLogin, 'Unregister', 'Delete your account')
-							]))
+						$elm$html$Html$text('This is the name other users see. If you want to be anonymous we encourage you to use \"n/a\".')
 					])),
-				A2(
-				$elm$core$Maybe$withDefault,
-				$elm$html$Html$text(''),
-				A2(
-					$elm$core$Maybe$map,
-					$author$project$Main$resumeLogin(p),
-					oidcLogin))
+				A2($author$project$NewName$addNameForm, toApp, m)
 			]);
 	});
+var $author$project$NewPassword$NewPasswordChange = function (a) {
+	return {$: 'NewPasswordChange', a: a};
+};
+var $author$project$NewPassword$PasswordRepeatChange = function (a) {
+	return {$: 'PasswordRepeatChange', a: a};
+};
+var $author$project$NewPassword$SubmitAddPassword = {$: 'SubmitAddPassword'};
+var $author$project$NewPassword$isDirty = function (_v0) {
+	var newPassword = _v0.newPassword;
+	var passwordRepeat = _v0.passwordRepeat;
+	var gt0 = function (x) {
+		return x > 0;
+	};
+	return gt0(
+		$elm$core$String$length(
+			$elm$core$String$concat(
+				_List_fromArray(
+					[newPassword, passwordRepeat]))));
+};
+var $author$project$NewPassword$passwordInput = {autofocus: true, icon: 'lock', id: 'NewPwd', label: 'Password', tabindex: 1, type_: 'password'};
+var $author$project$NewPassword$passwordRejection = function (_v0) {
+	var newPassword = _v0.newPassword;
+	var passwordRepeat = _v0.passwordRepeat;
+	return ($elm$core$String$length(newPassword) < 8) ? 'Password must be at least 8 characters long.' : (($elm$core$String$length(newPassword) > 64) ? 'Password must not be longer than 64 characters.' : '');
+};
+var $author$project$NewPassword$repeatPasswordInput = {autofocus: false, icon: 'lock_outline', id: 'RepeatPwd', label: 'Repeat password', tabindex: 2, type_: 'password'};
+var $author$project$NewPassword$repeatPasswordRejection = function (_v0) {
+	var newPassword = _v0.newPassword;
+	var passwordRepeat = _v0.passwordRepeat;
+	return (!_Utils_eq(newPassword, passwordRepeat)) ? 'Passwords don\'t match' : '';
+};
+var $author$project$NewPassword$addPasswordForm = F2(
+	function (toApp, _v0) {
+		var s = _v0.a;
+		var inp = _v0.b;
+		var pwdRepReject = $author$project$NewPassword$repeatPasswordRejection(inp);
+		var pwdReject = $author$project$NewPassword$passwordRejection(inp);
+		var rejected = !$elm$core$String$isEmpty(
+			$elm$core$String$concat(
+				_List_fromArray(
+					[pwdReject, pwdRepReject])));
+		var pending = function () {
+			if (s.$ === 'Pending') {
+				return true;
+			} else {
+				return false;
+			}
+		}();
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('section')
+				]),
+			_List_fromArray(
+				[
+					A4(
+					$author$project$Components$input,
+					$author$project$NewPassword$passwordInput,
+					$author$project$NewPassword$isDirty(inp),
+					$author$project$NewPassword$passwordRejection(inp),
+					A2($elm$core$Basics$composeL, toApp, $author$project$NewPassword$NewPasswordChange)),
+					A4(
+					$author$project$Components$input,
+					$author$project$NewPassword$repeatPasswordInput,
+					$author$project$NewPassword$isDirty(inp),
+					$author$project$NewPassword$repeatPasswordRejection(inp),
+					A2($elm$core$Basics$composeL, toApp, $author$project$NewPassword$PasswordRepeatChange)),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('btn'),
+							$elm$html$Html$Attributes$name('SubmitPwd'),
+							$elm$html$Html$Events$onClick(
+							toApp($author$project$NewPassword$SubmitAddPassword)),
+							$elm$html$Html$Attributes$disabled(rejected || pending)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Add')
+						]))
+				]));
+	});
+var $author$project$NewPassword$Noop = {$: 'Noop'};
+var $author$project$NewPassword$completionStatus = F3(
+	function (toApp, email, m) {
+		return A5(
+			$author$project$Components$completionProgress,
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewPassword$Noop),
+				'Email',
+				$elm$core$Maybe$Just(email + ' (verified)')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Current,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewPassword$Noop),
+				'Password',
+				$elm$core$Maybe$Just('not added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$InComplete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewPassword$Noop),
+				'Name',
+				$elm$core$Maybe$Just('not added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$InComplete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewPassword$Noop),
+				'Profile complete',
+				$elm$core$Maybe$Nothing),
+			$elm$core$Maybe$Nothing);
+	});
+var $author$project$NewPassword$view = F3(
+	function (toApp, email, m) {
+		return _List_fromArray(
+			[
+				A3($author$project$NewPassword$completionStatus, toApp, email, m),
+				A2(
+				$elm$html$Html$h5,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Add password')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('If you can, let a password manager generate a long and random one for you.')
+					])),
+				A2($author$project$NewPassword$addPasswordForm, toApp, m)
+			]);
+	});
+var $author$project$Main$content = function (model) {
+	var _v0 = model.profileCompletion;
+	switch (_v0.$) {
+		case 'Uninitialized':
+			return _List_Nil;
+		case 'AddingPassword':
+			var profile = _v0.a;
+			var addPwdModel = _v0.b;
+			return A3($author$project$NewPassword$view, $author$project$Main$NewPwdMsg, profile.email, addPwdModel);
+		case 'AddingName':
+			var profile = _v0.a;
+			var newNameModel = _v0.b;
+			return A3($author$project$NewName$view, $author$project$Main$NewNameMsg, profile.email, newNameModel);
+		case 'ProfileComplete':
+			var profile = _v0.a;
+			return A2($author$project$Main$completeView, profile, model);
+		default:
+			var profile = _v0.a;
+			var changePwdModel = _v0.b;
+			return A3($author$project$ChangePassword$view, $author$project$Main$ChangePwdMsg, profile, changePwdModel);
+	}
+};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $author$project$Main$view = function (m) {
 	return {
 		body: _List_fromArray(
@@ -12035,21 +12299,7 @@ var $author$project$Main$view = function (m) {
 											[
 												$elm$html$Html$text('Profile')
 											])),
-									function () {
-										var _v0 = m.profile;
-										switch (_v0.$) {
-											case 'Pending':
-												return _List_fromArray(
-													[
-														$elm$html$Html$text('')
-													]);
-											case 'Errored':
-												return $author$project$Main$renderError;
-											default:
-												var p = _v0.a;
-												return A4($author$project$Main$renderProfile, m.oidcLogin, p, m.password, m.name);
-										}
-									}()))
+									$author$project$Main$content(m)))
 							]))
 					]))
 			]),
@@ -12092,4 +12342,4 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 									A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string));
 							},
 							A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string)))
-					])))))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"Main.CurrentPassword":{"args":[],"type":"String.String"},"Main.NewName":{"args":[],"type":"String.String"},"Main.NewPassword":{"args":[],"type":"String.String"},"Main.NewPasswordRepeat":{"args":[],"type":"String.String"},"Main.OriginalName":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Main.Profile"],"ChangePasswordState":["Main.PasswordState"],"ChangeNameState":["Main.NameState"],"AddPwdNew":["String.String"],"AddPwdRepeat":["String.String"],"AddPwdSubmit":[],"AddPwdResponse":["Result.Result Http.Error ()"],"ChangePwdCurrent":["String.String"],"ChangePwdNew":["String.String"],"ChangePwdRepeat":["String.String"],"ChangePwdSubmit":[],"ChangePwdResponse":["Result.Result Http.Error ()"],"ChangeNameNew":["String.String"],"ChangeNameSubmit":[],"ChangeNameResponse":["Result.Result Http.Error ()"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Main.NameState":{"args":[],"tags":{"NameUnavailiable":[],"NameInput":["Main.OriginalName","Main.NewName","Basics.Bool"],"NamePending":[],"NameError":[]}},"Main.PasswordState":{"args":[],"tags":{"PasswordUnavailiable":[],"AddPasswordInput":["Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"ChangePasswordInput":["Main.CurrentPassword","Main.NewPassword","Main.NewPasswordRepeat","Basics.Bool"],"PasswordPending":[],"PasswordError":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
+					])))))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Model.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"ChangePassword.Password":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Model.Profile"],"ChangePassword":["Model.Profile"],"NewPwdMsg":["NewPassword.Msg"],"NewNameMsg":["NewName.Msg"],"ChangePwdMsg":["ChangePassword.Msg"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"ChangePassword.Msg":{"args":[],"tags":{"Noop":[],"CurrentPasswordInputChanged":["ChangePassword.Password"],"NewPasswordInputChanged":["ChangePassword.Password"],"NewPasswordRepeatChanged":["String.String"],"SubmitPasswordChange":[],"PasswordChanged":["Result.Result Http.Error ()"],"PasswordChangeCanceled":[]}},"NewName.Msg":{"args":[],"tags":{"NameInputChanged":["String.String"],"SubmitName":[],"SubmitNameResponse":["Result.Result Http.Error ()"],"Noop":[]}},"NewPassword.Msg":{"args":[],"tags":{"NewPasswordChange":["String.String"],"PasswordRepeatChange":["String.String"],"SubmitAddPassword":[],"AddPasswordResponse":["Result.Result Http.Error ()"],"Noop":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
