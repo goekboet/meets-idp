@@ -29,7 +29,7 @@ namespace Ids.Profile
                 var hasPwd = await _userManager.HasPasswordAsync(user);
 
                 var profile = new Profile(
-                    name: claims.FirstOrDefault(x => x.Type == "name")?.Value,
+                    name: claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "",
                     email: user.Email,
                     hasPassword: hasPwd
                 );
