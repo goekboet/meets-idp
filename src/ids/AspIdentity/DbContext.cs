@@ -1,7 +1,9 @@
+using System;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Ids.AspIdentity
 {
@@ -42,7 +44,13 @@ namespace Ids.AspIdentity
                 // Replace column names            
                 foreach (var property in entity.GetProperties())
                 {
-                    property.SetColumnName(sc(property.GetColumnName()));
+                    var id = StoreObjectIdentifier.Create(entity, StoreObjectType.Table);
+                    if (id == null)
+                    {
+                        throw new Exception("Cannot create objectIdentifier.");
+                    }
+
+                    property.SetColumnName(sc(property.GetColumnName(id.Value)));
                 }
 
                 foreach (var key in entity.GetKeys())
@@ -57,7 +65,7 @@ namespace Ids.AspIdentity
 
                 foreach (var index in entity.GetIndexes())
                 {
-                    index.SetName(sc(index.GetName()));
+                    index.SetDatabaseName(sc(index.GetDatabaseName()));
                 }
             }
         }
