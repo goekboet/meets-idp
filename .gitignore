@@ -10,3 +10,4 @@
 .fake
 .ionide
 **/oidc-client.*
+**/wwwroot
