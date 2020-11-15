@@ -31,10 +31,18 @@ namespace Ids.ChangeUsername
 
         string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
 
+        string CurrentEmail() => HttpContext.User.FindFirst("email")?.Value ?? "";
+
         [HttpGet, HttpHead]
         public IActionResult Index(string returnUrl)
         {
-            return View(v("Index"), new ChangeUsernameInput { ReturnUrl = returnUrl} );
+            return View(
+                v("Index"), 
+                new ChangeUsernameInput 
+                {
+                    CurentUsername = CurrentEmail(), 
+                    ReturnUrl = returnUrl
+                });
         }
 
         [HttpPost]
@@ -80,7 +88,8 @@ namespace Ids.ChangeUsername
         {
             return View(v("Token"), 
             new VerifiedChangeUsernameInput 
-            { 
+            {
+                CurentUsername = CurrentEmail(), 
                 Code = code, 
                 NewUsername = newEmail,
                 ReturnUrl = returnUrl

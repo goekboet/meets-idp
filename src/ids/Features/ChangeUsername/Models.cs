@@ -7,6 +7,8 @@ namespace Ids.ChangeUsername
 {
     public class ChangeUsernameInput
     {
+        public string CurentUsername { get; set; }
+
         [Required]
         [EmailAddress]
         [MaxLength(256)]
@@ -17,7 +19,9 @@ namespace Ids.ChangeUsername
     }
 
     public class VerifiedChangeUsernameInput
-    {        
+    {
+        public string CurentUsername { get; set; }
+            
         [Required]
         [MaxLength(512)]
         public string Code { get; set; }
