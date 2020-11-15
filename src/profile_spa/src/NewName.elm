@@ -7,6 +7,7 @@ import Html.Attributes as Attr exposing (class, disabled)
 import Html.Events exposing (onClick, onInput)
 import Url.Builder as UrlB
 import Json.Encode as Encode exposing (Value)
+import Model exposing (Profile, isComplete)
 
 type alias NameInput = String
 
@@ -36,13 +37,22 @@ type Msg
     | SubmitNameResponse (Result Error ())
     | Noop
 
-completionStatus : (Msg -> msg) -> String -> Model -> Html msg
-completionStatus toApp email m =
+inCompleteStatus : (Msg -> msg) -> Profile -> Model -> Html msg
+inCompleteStatus toApp p m =
     completionProgress
-        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (email ++ " (verified)")))
+        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (p.email ++ " (verified)")))
         (completionStep Complete NotApplicable (toApp Noop) "Password" (Just "added"))
         (completionStep Current NotApplicable (toApp Noop) "Name" (Just "not added"))
         (completionStep InComplete NotApplicable (toApp Noop) "Profile complete" Nothing)
+        Nothing
+
+completeStatus : (Msg -> msg) -> Profile -> Model -> Html msg
+completeStatus toApp p m =
+    completionProgress
+        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (p.email ++ " (verified)")))
+        (completionStep Complete NotApplicable (toApp Noop) "Password" (Just "added"))
+        (completionStep Complete Changing (toApp Noop) "Name" (Just p.name))
+        (completionStep Complete NotApplicable (toApp Noop) "Profile complete" Nothing)
         Nothing
 
 type alias AntiCsrfToken = String
@@ -126,10 +136,12 @@ addNameForm toApp (api, inp) =
       [ Html.text "Submit" ]
     ]
 
-view : (Msg -> msg) -> String -> Model -> List (Html msg)
-view toApp email m = 
-    [ Html.h5 [] [ Html.text "Add name"]
-    , completionStatus toApp email m 
+view : (Msg -> msg) -> Profile -> Model -> List (Html msg)
+view toApp p m = 
+    [ Html.h5 [] [ Html.text "Choose a name"]
+    , if isComplete p
+      then completeStatus toApp p m
+      else inCompleteStatus toApp p m 
     , Html.p [] [ Html.text "This is the name other users see. If you want to be anonymous we encourage you to use \"n/a\"."]
     , addNameForm toApp m  
     ]

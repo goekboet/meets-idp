@@ -36,6 +36,7 @@ type Msg
     = Noop
     | GotProfile (Result Error Profile)
     | ChangePassword Profile
+    | ChangeName Profile
     | NewPwdMsg NewPassword.Msg
     | NewNameMsg NewName.Msg 
     | ChangePwdMsg ChangePassword.Msg
@@ -50,12 +51,15 @@ update msg model =
         )
 
     GotProfile (Err _) ->
-        ( { model | faulty = True }
+        ( { model | profileCompletion = FetchProfileError }
         , Cmd.none 
         )
 
     ChangePassword p ->
         ( { model | profileCompletion = ChangingPassword p ChangePassword.init}, Cmd.none)
+
+    ChangeName p ->
+        ( { model | profileCompletion = AddingName p (NewName.init)}, Cmd.none)
 
     NewPwdMsg m -> 
         case model.profileCompletion of
@@ -128,7 +132,8 @@ update msg model =
 
 
 type ProfileCompletion 
-    = Uninitialized
+    = Pending
+    | FetchProfileError
     | AddingPassword Profile NewPassword.Model
     | AddingName Profile NewName.Model
     | ProfileComplete Profile
@@ -145,7 +150,6 @@ type alias Model =
     { antiCsrf : AntiCsrfToken
     , oidcLogin : Maybe OidcLogin
     , profileCompletion : ProfileCompletion
-    , faulty : Bool
     }
 
 type alias Flags =
@@ -158,20 +162,44 @@ init f =
     (
       { antiCsrf = f.antiCsrf
       , oidcLogin = f.oidcLogin 
-      , profileCompletion = Uninitialized
-      , faulty = False
+      , profileCompletion = Pending
       }
     , fetchProfile
     )
 
+error : List (Html Msg)
+error =
+    [ Html.h5 [] [ Html.text "Something went wrong" ]
+    , Html.p [] 
+      [ Html.text "You can try to " 
+      , Html.a [ Attr.href "/profile" ] [ Html.text "reload"]
+      , Html.text " the page. If the proble persists please contact us."
+      ]
+    ]
+
+preloader : List (Html Msg)
+preloader = 
+    [ Html.div [ class "preloader-wrapper active" ] 
+        [ Html.div [ class "spinner-layer spinner-red-only" ] 
+            [ Html.div [ class "circle-clipper left" ] 
+                [ Html.div [ class "circle" ] [] ]
+            , Html.div [ class "gap-patch" ]  
+                [ Html.div [ class "circle" ] [] ]
+            , Html.div [ class "circle-clipper right" ]  
+                [ Html.div [ class "circle" ] [] ]
+            ]
+        ]
+    ]
+
 content : Model -> List (Html Msg)
 content model =
     case model.profileCompletion of
-    Uninitialized -> []
+    Pending -> preloader
+    FetchProfileError -> error
     AddingPassword profile addPwdModel -> 
         NewPassword.view NewPwdMsg profile.email addPwdModel
     AddingName profile newNameModel ->
-        NewName.view NewNameMsg profile.email newNameModel
+        NewName.view NewNameMsg profile newNameModel
     ProfileComplete profile ->
         completeView profile model
     ChangingPassword profile changePwdModel ->
@@ -188,7 +216,7 @@ completionStatus p m =
     completionProgress
         (completionStep Complete Applicable Noop "Email" (Just (p.email ++ " (verified)")))
         (completionStep Complete Applicable (ChangePassword p) "Password" (Just "added"))
-        (completionStep Complete Applicable Noop "Name" (Just p.name ))
+        (completionStep Complete Applicable (ChangeName p) "Name" (Just p.name ))
         (completionStep Complete NotApplicable Noop "Profile complete" Nothing)
         Nothing
 

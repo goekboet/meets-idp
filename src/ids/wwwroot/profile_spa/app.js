@@ -10712,7 +10712,7 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Uninitialized = {$: 'Uninitialized'};
+var $author$project$Main$Pending = {$: 'Pending'};
 var $author$project$Main$GotProfile = function (a) {
 	return {$: 'GotProfile', a: a};
 };
@@ -11005,7 +11005,7 @@ var $author$project$Main$fetchProfile = $elm$http$Http$get(
 	});
 var $author$project$Main$init = function (f) {
 	return _Utils_Tuple2(
-		{antiCsrf: f.antiCsrf, faulty: false, oidcLogin: f.oidcLogin, profileCompletion: $author$project$Main$Uninitialized},
+		{antiCsrf: f.antiCsrf, oidcLogin: f.oidcLogin, profileCompletion: $author$project$Main$Pending},
 		$author$project$Main$fetchProfile);
 };
 var $elm$json$Json$Decode$null = _Json_decodeNull;
@@ -11030,6 +11030,7 @@ var $author$project$Main$ChangingPassword = F2(
 	function (a, b) {
 		return {$: 'ChangingPassword', a: a, b: b};
 	});
+var $author$project$Main$FetchProfileError = {$: 'FetchProfileError'};
 var $author$project$Main$NewNameMsg = function (a) {
 	return {$: 'NewNameMsg', a: a};
 };
@@ -11400,7 +11401,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{faulty: true}),
+							{profileCompletion: $author$project$Main$FetchProfileError}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'ChangePassword':
@@ -11410,6 +11411,15 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							profileCompletion: A2($author$project$Main$ChangingPassword, p, $author$project$ChangePassword$init)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'ChangeName':
+				var p = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							profileCompletion: A2($author$project$Main$AddingName, p, $author$project$NewName$init)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'NewPwdMsg':
@@ -11481,6 +11491,9 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $author$project$Components$Applicable = {$: 'Applicable'};
+var $author$project$Main$ChangeName = function (a) {
+	return {$: 'ChangeName', a: a};
+};
 var $author$project$Main$ChangePassword = function (a) {
 	return {$: 'ChangePassword', a: a};
 };
@@ -11701,7 +11714,7 @@ var $author$project$Main$completionStatus = F2(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
 				$author$project$Components$Applicable,
-				$author$project$Main$Noop,
+				$author$project$Main$ChangeName(p),
 				'Name',
 				$elm$core$Maybe$Just(p.name)),
 			A5($author$project$Components$completionStep, $author$project$Components$Complete, $author$project$Components$NotApplicable, $author$project$Main$Noop, 'Profile complete', $elm$core$Maybe$Nothing),
@@ -11742,6 +11755,103 @@ var $author$project$Main$completeView = F2(
 				$author$project$Main$oidcLogin(m)
 			]);
 	});
+var $author$project$Main$error = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$h5,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Something went wrong')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('You can try to '),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/profile')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('reload')
+					])),
+				$elm$html$Html$text(' the page. If the proble persists please contact us.')
+			]))
+	]);
+var $author$project$Main$preloader = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('preloader-wrapper active')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('spinner-layer spinner-red-only')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('circle-clipper left')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('circle')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('gap-patch')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('circle')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('circle-clipper right')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('circle')
+									]),
+								_List_Nil)
+							]))
+					]))
+			]))
+	]);
 var $author$project$ChangePassword$CurrentPasswordInputChanged = function (a) {
 	return {$: 'CurrentPasswordInputChanged', a: a};
 };
@@ -11949,14 +12059,14 @@ var $author$project$ChangePassword$completionStatus = F3(
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
-				$author$project$Components$Applicable,
+				$author$project$Components$NotApplicable,
 				toApp($author$project$ChangePassword$Noop),
 				'Name',
 				$elm$core$Maybe$Just(p.name)),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
-				$author$project$Components$Applicable,
+				$author$project$Components$NotApplicable,
 				toApp($author$project$ChangePassword$Noop),
 				'Profile complete',
 				$elm$core$Maybe$Nothing),
@@ -12041,11 +12151,9 @@ var $author$project$NewName$addNameForm = F2(
 						]))
 				]));
 	});
-var $author$project$Components$Current = {$: 'Current'};
-var $author$project$Components$InComplete = {$: 'InComplete'};
 var $author$project$NewName$Noop = {$: 'Noop'};
-var $author$project$NewName$completionStatus = F3(
-	function (toApp, email, m) {
+var $author$project$NewName$completeStatus = F3(
+	function (toApp, p, m) {
 		return A5(
 			$author$project$Components$completionProgress,
 			A5(
@@ -12054,7 +12162,43 @@ var $author$project$NewName$completionStatus = F3(
 				$author$project$Components$NotApplicable,
 				toApp($author$project$NewName$Noop),
 				'Email',
-				$elm$core$Maybe$Just(email + ' (verified)')),
+				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Password',
+				$elm$core$Maybe$Just('added')),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$Changing,
+				toApp($author$project$NewName$Noop),
+				'Name',
+				$elm$core$Maybe$Just(p.name)),
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Profile complete',
+				$elm$core$Maybe$Nothing),
+			$elm$core$Maybe$Nothing);
+	});
+var $author$project$Components$Current = {$: 'Current'};
+var $author$project$Components$InComplete = {$: 'InComplete'};
+var $author$project$NewName$inCompleteStatus = F3(
+	function (toApp, p, m) {
+		return A5(
+			$author$project$Components$completionProgress,
+			A5(
+				$author$project$Components$completionStep,
+				$author$project$Components$Complete,
+				$author$project$Components$NotApplicable,
+				toApp($author$project$NewName$Noop),
+				'Email',
+				$elm$core$Maybe$Just(p.email + ' (verified)')),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
@@ -12078,8 +12222,11 @@ var $author$project$NewName$completionStatus = F3(
 				$elm$core$Maybe$Nothing),
 			$elm$core$Maybe$Nothing);
 	});
+var $author$project$Model$isComplete = function (p) {
+	return (p.name !== '') && p.hasPassword;
+};
 var $author$project$NewName$view = F3(
-	function (toApp, email, m) {
+	function (toApp, p, m) {
 		return _List_fromArray(
 			[
 				A2(
@@ -12087,9 +12234,9 @@ var $author$project$NewName$view = F3(
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Add name')
+						$elm$html$Html$text('Choose a name')
 					])),
-				A3($author$project$NewName$completionStatus, toApp, email, m),
+				$author$project$Model$isComplete(p) ? A3($author$project$NewName$completeStatus, toApp, p, m) : A3($author$project$NewName$inCompleteStatus, toApp, p, m),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
@@ -12244,8 +12391,10 @@ var $author$project$NewPassword$view = F3(
 var $author$project$Main$content = function (model) {
 	var _v0 = model.profileCompletion;
 	switch (_v0.$) {
-		case 'Uninitialized':
-			return _List_Nil;
+		case 'Pending':
+			return $author$project$Main$preloader;
+		case 'FetchProfileError':
+			return $author$project$Main$error;
 		case 'AddingPassword':
 			var profile = _v0.a;
 			var addPwdModel = _v0.b;
@@ -12253,7 +12402,7 @@ var $author$project$Main$content = function (model) {
 		case 'AddingName':
 			var profile = _v0.a;
 			var newNameModel = _v0.b;
-			return A3($author$project$NewName$view, $author$project$Main$NewNameMsg, profile.email, newNameModel);
+			return A3($author$project$NewName$view, $author$project$Main$NewNameMsg, profile, newNameModel);
 		case 'ProfileComplete':
 			var profile = _v0.a;
 			return A2($author$project$Main$completeView, profile, model);
@@ -12342,4 +12491,4 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 									A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string));
 							},
 							A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string)))
-					])))))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Model.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"ChangePassword.Password":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Model.Profile"],"ChangePassword":["Model.Profile"],"NewPwdMsg":["NewPassword.Msg"],"NewNameMsg":["NewName.Msg"],"ChangePwdMsg":["ChangePassword.Msg"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"ChangePassword.Msg":{"args":[],"tags":{"Noop":[],"CurrentPasswordInputChanged":["ChangePassword.Password"],"NewPasswordInputChanged":["ChangePassword.Password"],"NewPasswordRepeatChanged":["String.String"],"SubmitPasswordChange":[],"PasswordChanged":["Result.Result Http.Error ()"],"PasswordChangeCanceled":[]}},"NewName.Msg":{"args":[],"tags":{"NameInputChanged":["String.String"],"SubmitName":[],"SubmitNameResponse":["Result.Result Http.Error ()"],"Noop":[]}},"NewPassword.Msg":{"args":[],"tags":{"NewPasswordChange":["String.String"],"PasswordRepeatChange":["String.String"],"SubmitAddPassword":[],"AddPasswordResponse":["Result.Result Http.Error ()"],"Noop":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
+					])))))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Model.Profile":{"args":[],"type":"{ name : String.String, email : String.String, hasPassword : Basics.Bool }"},"ChangePassword.Password":{"args":[],"type":"String.String"}},"unions":{"Main.Msg":{"args":[],"tags":{"Noop":[],"GotProfile":["Result.Result Http.Error Model.Profile"],"ChangePassword":["Model.Profile"],"ChangeName":["Model.Profile"],"NewPwdMsg":["NewPassword.Msg"],"NewNameMsg":["NewName.Msg"],"ChangePwdMsg":["ChangePassword.Msg"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"ChangePassword.Msg":{"args":[],"tags":{"Noop":[],"CurrentPasswordInputChanged":["ChangePassword.Password"],"NewPasswordInputChanged":["ChangePassword.Password"],"NewPasswordRepeatChanged":["String.String"],"SubmitPasswordChange":[],"PasswordChanged":["Result.Result Http.Error ()"],"PasswordChangeCanceled":[]}},"NewName.Msg":{"args":[],"tags":{"NameInputChanged":["String.String"],"SubmitName":[],"SubmitNameResponse":["Result.Result Http.Error ()"],"Noop":[]}},"NewPassword.Msg":{"args":[],"tags":{"NewPasswordChange":["String.String"],"PasswordRepeatChange":["String.String"],"SubmitAddPassword":[],"AddPasswordResponse":["Result.Result Http.Error ()"],"Noop":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));

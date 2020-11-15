@@ -75,8 +75,8 @@ completionStatus toApp p m =
     completionProgress
         (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (p.email ++ " (verified)")))
         (completionStep Complete Changing (toApp Noop) "Password" (Just "added"))
-        (completionStep Complete Applicable (toApp Noop) "Name" (Just p.name))
-        (completionStep Complete Applicable (toApp Noop) "Profile complete" Nothing)
+        (completionStep Complete NotApplicable (toApp Noop) "Name" (Just p.name))
+        (completionStep Complete NotApplicable (toApp Noop) "Profile complete" Nothing)
         Nothing
 
 type alias Rejection = String
