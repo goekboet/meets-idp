@@ -11692,17 +11692,49 @@ var $author$project$Components$completionStep = F5(
 				A2($author$project$Components$changeButton, changeS, m)
 			]);
 	});
+var $author$project$Components$emailCompletion = F2(
+	function (email, cs) {
+		var visibility = function () {
+			if (cs.$ === 'NotApplicable') {
+				return A2($elm$html$Html$Attributes$style, 'visibility', 'hidden');
+			} else {
+				return A2($elm$html$Html$Attributes$style, 'visibility', 'visible');
+			}
+		}();
+		return _List_fromArray(
+			[
+				$author$project$Components$stepIcon($author$project$Components$Complete),
+				$author$project$Components$stepName('Email'),
+				A2(
+				$elm$html$Html$label,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'flex-grow', '1'),
+						$elm$html$Html$Attributes$class('status truncate')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(email + ' (verified)')
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/ChangeUsername'),
+						$elm$html$Html$Attributes$class('btn-flat'),
+						visibility
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Change')
+					]))
+			]);
+	});
 var $author$project$Main$completionStatus = F2(
 	function (p, m) {
 		return A5(
 			$author$project$Components$completionProgress,
-			A5(
-				$author$project$Components$completionStep,
-				$author$project$Components$Complete,
-				$author$project$Components$Applicable,
-				$author$project$Main$Noop,
-				'Email',
-				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A2($author$project$Components$emailCompletion, p.email, $author$project$Components$Applicable),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
@@ -11874,6 +11906,12 @@ var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
 var $author$project$ChangePassword$currentPasswordInput = {autofocus: true, icon: 'lock_open', id: 'CurrentPwd', label: 'Current password', tabindex: 1, type_: 'password'};
+var $elm$html$Html$Attributes$autocomplete = function (bool) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'autocomplete',
+		bool ? 'on' : 'off');
+};
 var $elm$html$Html$Attributes$autofocus = $elm$html$Html$Attributes$boolProperty('autofocus');
 var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
@@ -11920,6 +11958,7 @@ var $author$project$Components$input = F4(
 							$elm$html$Html$Attributes$type_(type_),
 							$elm$html$Html$Attributes$tabindex(tabindex),
 							$elm$html$Html$Attributes$autofocus(autofocus),
+							$elm$html$Html$Attributes$autocomplete(false),
 							$elm$html$Html$Events$onInput(msg)
 						]),
 					_List_Nil),
@@ -12042,13 +12081,7 @@ var $author$project$ChangePassword$completionStatus = F3(
 	function (toApp, p, m) {
 		return A5(
 			$author$project$Components$completionProgress,
-			A5(
-				$author$project$Components$completionStep,
-				$author$project$Components$Complete,
-				$author$project$Components$NotApplicable,
-				toApp($author$project$ChangePassword$Noop),
-				'Email',
-				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A2($author$project$Components$emailCompletion, p.email, $author$project$Components$NotApplicable),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
@@ -12156,13 +12189,7 @@ var $author$project$NewName$completeStatus = F3(
 	function (toApp, p, m) {
 		return A5(
 			$author$project$Components$completionProgress,
-			A5(
-				$author$project$Components$completionStep,
-				$author$project$Components$Complete,
-				$author$project$Components$NotApplicable,
-				toApp($author$project$NewName$Noop),
-				'Email',
-				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A2($author$project$Components$emailCompletion, p.email, $author$project$Components$NotApplicable),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
@@ -12192,13 +12219,7 @@ var $author$project$NewName$inCompleteStatus = F3(
 	function (toApp, p, m) {
 		return A5(
 			$author$project$Components$completionProgress,
-			A5(
-				$author$project$Components$completionStep,
-				$author$project$Components$Complete,
-				$author$project$Components$NotApplicable,
-				toApp($author$project$NewName$Noop),
-				'Email',
-				$elm$core$Maybe$Just(p.email + ' (verified)')),
+			A2($author$project$Components$emailCompletion, p.email, $author$project$Components$NotApplicable),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Complete,
@@ -12336,13 +12357,7 @@ var $author$project$NewPassword$completionStatus = F3(
 	function (toApp, email, m) {
 		return A5(
 			$author$project$Components$completionProgress,
-			A5(
-				$author$project$Components$completionStep,
-				$author$project$Components$Complete,
-				$author$project$Components$NotApplicable,
-				toApp($author$project$NewPassword$Noop),
-				'Email',
-				$elm$core$Maybe$Just(email + ' (verified)')),
+			A2($author$project$Components$emailCompletion, email, $author$project$Components$NotApplicable),
 			A5(
 				$author$project$Components$completionStep,
 				$author$project$Components$Current,

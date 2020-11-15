@@ -40,7 +40,7 @@ type Msg
 inCompleteStatus : (Msg -> msg) -> Profile -> Model -> Html msg
 inCompleteStatus toApp p m =
     completionProgress
-        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (p.email ++ " (verified)")))
+        (Components.emailCompletion p.email NotApplicable)
         (completionStep Complete NotApplicable (toApp Noop) "Password" (Just "added"))
         (completionStep Current NotApplicable (toApp Noop) "Name" (Just "not added"))
         (completionStep InComplete NotApplicable (toApp Noop) "Profile complete" Nothing)
@@ -49,7 +49,7 @@ inCompleteStatus toApp p m =
 completeStatus : (Msg -> msg) -> Profile -> Model -> Html msg
 completeStatus toApp p m =
     completionProgress
-        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (p.email ++ " (verified)")))
+        (Components.emailCompletion p.email NotApplicable)
         (completionStep Complete NotApplicable (toApp Noop) "Password" (Just "added"))
         (completionStep Complete Changing (toApp Noop) "Name" (Just p.name))
         (completionStep Complete NotApplicable (toApp Noop) "Profile complete" Nothing)

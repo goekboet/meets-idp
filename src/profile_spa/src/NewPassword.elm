@@ -108,7 +108,7 @@ setPwdRepeat pwd (s, inp) = (s, { inp | passwordRepeat = pwd })
 completionStatus : (Msg -> msg) -> String -> Model -> Html msg
 completionStatus toApp email m =
     completionProgress
-        (completionStep Complete NotApplicable (toApp Noop) "Email" (Just (email ++ " (verified)")))
+        (Components.emailCompletion email NotApplicable)
         (completionStep Current NotApplicable (toApp Noop) "Password" (Just "not added"))
         (completionStep InComplete NotApplicable (toApp Noop) "Name" (Just "not added"))
         (completionStep InComplete NotApplicable (toApp Noop) "Profile complete" Nothing)

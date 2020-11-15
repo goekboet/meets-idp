@@ -214,7 +214,7 @@ oidcLogin m =
 completionStatus : Profile -> Model -> Html Msg
 completionStatus p m =
     completionProgress
-        (completionStep Complete Applicable Noop "Email" (Just (p.email ++ " (verified)")))
+        (Components.emailCompletion p.email Applicable)
         (completionStep Complete Applicable (ChangePassword p) "Password" (Just "added"))
         (completionStep Complete Applicable (ChangeName p) "Name" (Just p.name ))
         (completionStep Complete NotApplicable Noop "Profile complete" Nothing)

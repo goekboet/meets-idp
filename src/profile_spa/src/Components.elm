@@ -1,4 +1,4 @@
-module Components exposing (StepStatus(..), ChangeStatus(..), completionStep, completionProgress, input, Input)
+module Components exposing (StepStatus(..), ChangeStatus(..), completionStep, completionProgress, input, Input, emailCompletion)
 
 import Html exposing (Html)
 import Html.Attributes as Attr exposing (class, disabled)
@@ -39,6 +39,7 @@ input { id, type_, icon, label, tabindex, autofocus } dirty validation msg
         , Attr.type_ type_
         , Attr.tabindex tabindex
         , Attr.autofocus autofocus
+        , Attr.autocomplete False
         , onInput msg ] 
         []
     , Html.label [ class "active", Attr.for id ] [ Html.text (label ++ (if dirty then "*" else ""))]
@@ -97,6 +98,22 @@ completionStep stepS changeS m stepN stepO =
     , stepName stepN
     , stepOutcome stepO stepS
     , changeButton changeS m
+    ]
+
+emailCompletion : String -> ChangeStatus -> List (Html msg)
+emailCompletion email cs =
+    let
+        visibility = 
+            case cs of
+            NotApplicable -> Attr.style "visibility" "hidden"
+            _ -> Attr.style "visibility" "visible"
+
+    in
+    
+    [ stepIcon Complete
+    , stepName "Email"
+    , Html.label [ Attr.style "flex-grow" "1", class "status truncate" ] [ Html.text (email ++ " (verified)") ]
+    , Html.a [ Attr.href "/ChangeUsername", class "btn-flat", visibility ] [ Html.text "Change" ]
     ]
 
 completionProgress : List (Html msg) -> List (Html msg) -> List (Html msg) -> List (Html msg) -> Maybe (List (Html msg)) -> Html msg
