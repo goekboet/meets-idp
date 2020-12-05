@@ -18,6 +18,8 @@ using Ids.Profile;
 using Ids.Register;
 using Ids.Unregister;
 using Ids.ChangeUsername;
+using Microsoft.AspNetcore.Builder;
+using Microsoft.Extensions.Logging;
 
 namespace Ids
 {
@@ -53,7 +55,8 @@ namespace Ids
         }
 
         public void Configure(
-            IApplicationBuilder app)
+            IApplicationBuilder app,
+            ILoggerFactory logger)
         {
             if (!Configuration.GetValue<bool>("ElasticApm:OptOut"))
             {

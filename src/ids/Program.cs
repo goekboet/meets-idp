@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Formatting.Elasticsearch;
 using Microsoft.Extensions.Configuration;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Ids
 {
@@ -21,7 +22,9 @@ namespace Ids
             switch (key)
             {
                 case "Console":
-                    logger.WriteTo.Console();
+                    logger.WriteTo.Console(
+                        theme: AnsiConsoleTheme.Code,
+                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
                     break;
                 case "StdOutJson":
                     logger.WriteTo.Console(new ElasticsearchJsonFormatter());
