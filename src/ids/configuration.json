@@ -8,14 +8,20 @@
           "Value": "7yYOmqPGc68kDReiZgSANhqOCB0f/soqXtDjIZ/BhWc="
         }
       ],
+      "RequireClientSecret": false,
+      "AllowOfflineAccess": true,
       "AllowedGrantTypes": [
-        "password"
+        "password",
+        "authorization_code",
+        "refresh_token"
       ],
       "AllowedScopes": [
         "openid",
         "profile",
-        "bookings",
-        "offline_access"
+        "bookings"
+      ],
+      "RedirectUris": [
+        "http://ego.dev"
       ]
     },
     {

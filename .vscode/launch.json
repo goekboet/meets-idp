@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/ids/bin/Debug/netcoreapp3.1/ids.dll",
+            "program": "${workspaceFolder}/src/ids/bin/Debug/net5.0/ids.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/ids",
             "stopAtEntry": false,
