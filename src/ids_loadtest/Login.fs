@@ -106,6 +106,7 @@ let authCodeParams
     |> List.map (fun (k,v) -> sprintf "%s=%s" k v)
 
 let idsLocation = "https://ids.ego"
+// let idsLocation = "https://localhost:5001"
 
 let authCodeRequest = Step.create("request auth-code", fun ctx -> task {
     let ps = String.Join("&", authCodeParams) 
