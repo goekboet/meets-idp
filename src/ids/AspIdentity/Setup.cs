@@ -27,6 +27,8 @@ namespace Ids.AspIdentity
                 })
                 .AddEntityFrameworkStores<UsersDb>()
                 .AddDefaultTokenProviders();
+
+            services.AddAuthentication().AddLocalApi();
         }
     }
 }

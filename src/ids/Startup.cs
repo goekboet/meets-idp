@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Elastic.Apm.NetCoreAll;
+using Microsoft.Extensions.Logging;
 
 using Ids.AspIdentity;
 using Ids.Pki;
@@ -18,8 +18,8 @@ using Ids.Profile;
 using Ids.Register;
 using Ids.Unregister;
 using Ids.ChangeUsername;
-using Microsoft.AspNetcore.Builder;
-using Microsoft.Extensions.Logging;
+using Ids.Invite;
+using Ids.Authorization;
 
 namespace Ids
 {
@@ -43,7 +43,8 @@ namespace Ids
             services.SetupDataProtection(Configuration);
             services.ConfigureAspIdentity(Configuration);
             services.ConfigureIdentityServer4(Configuration);
-            
+            services.SetupAuthorization();
+
             services.AddControllersWithViews();
             services.SetupKeyStore();
             services.SetupRegister();
@@ -52,6 +53,7 @@ namespace Ids
             services.SetupLogin();
             services.SetupProfile();
             services.SetupChangeUsername();
+            services.SetupInvite();
         }
 
         public void Configure(
