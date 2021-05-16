@@ -92,7 +92,7 @@ let clientId = "dev"
 let redirectUrl = @"http://ego.dev"
 let codeVerifier = "MHru8CBpeEBRBnaOZoqcedbJK8_Zk03bJ5StlDwTI5E"
 let challenge = "ku8vRsgaq3UxbK5wQiR2U3KTZAwmEmRLTD-KlmmxAAU"
-let scope = "openid profile offline_access"
+let scope = "openid profile"
 
 let authCodeParams
     =
@@ -105,8 +105,8 @@ let authCodeParams
     ]
     |> List.map (fun (k,v) -> sprintf "%s=%s" k v)
 
-let idsLocation = "https://ids.ego"
-// let idsLocation = "https://localhost:5001"
+// let idsLocation = "https://ids.ego"
+let idsLocation = "https://localhost:5001"
 
 let authCodeRequest = Step.create("request auth-code", fun ctx -> task {
     let ps = String.Join("&", authCodeParams) 

@@ -25,6 +25,26 @@
       ]
     },
     {
+      "ClientId": "byappt.call",
+      "ClientName": "Call",
+      "RequireClientSecret": false,
+      "AllowOfflineAccess": false,
+      "AccessTokenLifetime": 14400,
+      "AllowedGrantTypes": [
+        "authorization_code"
+      ],
+      "AllowedScopes": [
+        "openid",
+        "profile"
+      ],
+      "RedirectUris": [
+        "http://localhost:6010/callback.html"
+      ],
+      "AllowedCorsOrigins": [
+        "http://localhost:6010"
+      ]
+    },
+    {
       "ClientId": "publish",
       "ClientName": "Byappt appointment publisher",
       "RequireConsent": false,

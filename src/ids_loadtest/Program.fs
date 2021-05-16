@@ -16,9 +16,9 @@ let main argv =
     
     // now you use HttpStep instead of NBomber's default Step        
     // wu: 300 d: 900
-    Scenario.create "Ids login" [authCodeRequest; getLogin; postLogin; callback; redeemCode; getUserInfo; refreshToken; revokeTokenStep]     
+    Scenario.create "Ids login" [authCodeRequest; getLogin; postLogin; callback; redeemCode; getUserInfo]     
     |> Scenario.withWarmUpDuration(seconds 60)
-    |> Scenario.withLoadSimulations [InjectPerSec(rate = 6, during = seconds 300)]
+    |> Scenario.withLoadSimulations [InjectPerSec(rate = 15, during = seconds 60)]
     |> NBomberRunner.registerScenario
     |> NBomberRunner.withWorkerPlugins [pingPlugin]
     |> NBomberRunner.run
