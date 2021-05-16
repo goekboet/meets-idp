@@ -1,9 +1,8 @@
 ﻿using System.IO;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using IdentityServer4.Configuration;
+using Duende.IdentityServer.Configuration;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Linq;
 
 namespace pki
