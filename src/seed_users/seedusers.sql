@@ -1,8 +1,9 @@
-CREATE TEMPORARY TABLE seed_users(
-   "id" text,
-   "user_name" character varying(256),
-   "password" text,
-   "password_hash" text
+CREATE TABLE IF NOT EXISTS seed_users(
+   "id" TEXT NOT NULL,
+   "user_name" TEXT NOT NULL,
+   "password" TEXT NOT NULL,
+   "password_hash" TEXT NOT NULL,
+   "security_stamp" TEXT NOT NULL
 );
 
 insert into asp_net_users(
@@ -26,7 +27,7 @@ select
 	UPPER(user_name) as normalized_email,
 	true as email_confirmed,
 	password_hash,
-	md5(random()::text) as security_stamp,
+	security_stamp as security_stamp,
 	false as phone_number_confirmed,
 	false as two_factor_enabled,
 	false as lockout_enabled,

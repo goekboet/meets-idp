@@ -19,6 +19,7 @@ type Cred =
       Email : string
       Password : string
       PasswordHash : string
+      SecurityStamp : string
     }
 
 type Antiforgery =
@@ -48,7 +49,7 @@ let credsPost
 
 
 let credsFeed =
-    FeedData.fromCsv<Cred> "out-1605969717909.csv"
+    FeedData.fromCsv<Cred> "out-1621180524065.csv"
     |> Feed.createRandom "creds"
     
 let getCsrfToken (html : string) =
