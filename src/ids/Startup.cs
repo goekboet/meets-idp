@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Elastic.Apm.NetCoreAll;
 using Microsoft.Extensions.Logging;
 
 using Ids.AspIdentity;
@@ -60,28 +59,11 @@ namespace Ids
             IApplicationBuilder app,
             ILoggerFactory logger)
         {
-            if (!Configuration.GetValue<bool>("ElasticApm:OptOut"))
-            {
-                app.UseAllElasticApm(Configuration);
-            }
-            
             app.UseForwardedHeaders();
-
-            if (Configuration.GetValue<bool>("Development"))
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/error");
-            }
-            
-
+            app.UseExceptionHandler("/error");
             app.UseStaticFiles();
             app.UseRouting();
-
             app.UseIdentityServer();
-
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

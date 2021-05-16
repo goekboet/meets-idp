@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Events;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Validation;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Validation;
 using Ids.AspIdentity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -33,7 +33,7 @@ namespace Ids.AspIdentity
         }
     }
     /// <summary>
-    /// Cut and pasted from IdentityServer4.AspNetIdentity only changed
+    /// Cut and pasted from Duende.IdentityServer.AspNetIdentity only changed
     /// to lookup user via email instead of username.
     /// </summary>
     public class MapUsernameToEmail : IResourceOwnerPasswordValidator

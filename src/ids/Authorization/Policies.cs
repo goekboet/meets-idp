@@ -1,4 +1,4 @@
-using IdentityServer4;
+using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Ids.Authorization

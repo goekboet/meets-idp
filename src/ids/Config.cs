@@ -6,7 +6,7 @@
 // proper hKyHSyMqAZ4Jkd2uUOtVd3+4NvmND+jv2ncuWSsqktk=
 // meets  TZyfD1CybAcT1+jyyTw5VsRFXo7cM5R7gI45CowrrwQ=
 
-using IdentityServer4.Models;
+using Duende.IdentityServer.Models;
 using System.Collections.Generic;
 using Custom = Ids.AspIdentity;
 

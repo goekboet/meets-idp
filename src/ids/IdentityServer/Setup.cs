@@ -28,9 +28,13 @@ namespace Ids.Identityserver4
                 .AddOperationalStore(options => {
                     options.ConfigureDbContext = builder =>
                     {
-                        builder.UseNpgsql(
+                        // builder.UseNpgsql(
+                        //     config.GetConnectionString("Grants"),
+                        //     b => b.MigrationsAssembly("ids"));
+                        builder.UseSqlite(
                             config.GetConnectionString("Grants"),
                             b => b.MigrationsAssembly("ids"));
+
 
                     };
                     options.EnableTokenCleanup = true;

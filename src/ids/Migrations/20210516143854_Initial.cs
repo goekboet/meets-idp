@@ -1,10 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace gateway.Migrations.ApplicationDb
+namespace ids.Migrations
 {
-    public partial class init : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,10 +11,10 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_roles",
                 columns: table => new
                 {
-                    id = table.Column<string>(nullable: false),
-                    name = table.Column<string>(maxLength: 256, nullable: true),
-                    normalized_name = table.Column<string>(maxLength: 256, nullable: true),
-                    concurrency_stamp = table.Column<string>(nullable: true)
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    normalized_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -26,21 +25,21 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_users",
                 columns: table => new
                 {
-                    id = table.Column<string>(nullable: false),
-                    user_name = table.Column<string>(maxLength: 256, nullable: true),
-                    normalized_user_name = table.Column<string>(maxLength: 256, nullable: true),
-                    email = table.Column<string>(maxLength: 256, nullable: true),
-                    normalized_email = table.Column<string>(maxLength: 256, nullable: true),
-                    email_confirmed = table.Column<bool>(nullable: false),
-                    password_hash = table.Column<string>(nullable: true),
-                    security_stamp = table.Column<string>(nullable: true),
-                    concurrency_stamp = table.Column<string>(nullable: true),
-                    phone_number = table.Column<string>(nullable: true),
-                    phone_number_confirmed = table.Column<bool>(nullable: false),
-                    two_factor_enabled = table.Column<bool>(nullable: false),
-                    lockout_end = table.Column<DateTimeOffset>(nullable: true),
-                    lockout_enabled = table.Column<bool>(nullable: false),
-                    access_failed_count = table.Column<int>(nullable: false)
+                    id = table.Column<string>(type: "TEXT", nullable: false),
+                    user_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    normalized_user_name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    normalized_email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    email_confirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    password_hash = table.Column<string>(type: "TEXT", nullable: true),
+                    security_stamp = table.Column<string>(type: "TEXT", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "TEXT", nullable: true),
+                    phone_number = table.Column<string>(type: "TEXT", nullable: true),
+                    phone_number_confirmed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    two_factor_enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    lockout_end = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
+                    lockout_enabled = table.Column<bool>(type: "INTEGER", nullable: false),
+                    access_failed_count = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,11 +50,11 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_role_claims",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    role_id = table.Column<string>(nullable: false),
-                    claim_type = table.Column<string>(nullable: true),
-                    claim_value = table.Column<string>(nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    role_id = table.Column<string>(type: "TEXT", nullable: false),
+                    claim_type = table.Column<string>(type: "TEXT", nullable: true),
+                    claim_value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -72,11 +71,11 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_user_claims",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<string>(nullable: false),
-                    claim_type = table.Column<string>(nullable: true),
-                    claim_value = table.Column<string>(nullable: true)
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
+                    claim_type = table.Column<string>(type: "TEXT", nullable: true),
+                    claim_value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,10 +92,10 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_user_logins",
                 columns: table => new
                 {
-                    login_provider = table.Column<string>(nullable: false),
-                    provider_key = table.Column<string>(nullable: false),
-                    provider_display_name = table.Column<string>(nullable: true),
-                    user_id = table.Column<string>(nullable: false)
+                    login_provider = table.Column<string>(type: "TEXT", nullable: false),
+                    provider_key = table.Column<string>(type: "TEXT", nullable: false),
+                    provider_display_name = table.Column<string>(type: "TEXT", nullable: true),
+                    user_id = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,8 +112,8 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_user_roles",
                 columns: table => new
                 {
-                    user_id = table.Column<string>(nullable: false),
-                    role_id = table.Column<string>(nullable: false)
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
+                    role_id = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,10 +136,10 @@ namespace gateway.Migrations.ApplicationDb
                 name: "asp_net_user_tokens",
                 columns: table => new
                 {
-                    user_id = table.Column<string>(nullable: false),
-                    login_provider = table.Column<string>(nullable: false),
-                    name = table.Column<string>(nullable: false),
-                    value = table.Column<string>(nullable: true)
+                    user_id = table.Column<string>(type: "TEXT", nullable: false),
+                    login_provider = table.Column<string>(type: "TEXT", nullable: false),
+                    name = table.Column<string>(type: "TEXT", nullable: false),
+                    value = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

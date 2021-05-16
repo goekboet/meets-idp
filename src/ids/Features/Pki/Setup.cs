@@ -1,4 +1,4 @@
-using IdentityServer4.Stores;
+using Duende.IdentityServer.Stores;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ids.Pki
