@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using Ids.AspIdentity;
-using Ids.Pki;
 using Ids.Forgot;
 using Ids.Login;
 using Ids.Identityserver4;
@@ -45,7 +44,6 @@ namespace Ids
             services.SetupAuthorization();
 
             services.AddControllersWithViews();
-            services.SetupKeyStore();
             services.SetupRegister();
             services.SetupUnregister();
             services.SetupForgot();

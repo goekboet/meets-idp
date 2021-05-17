@@ -31,7 +31,7 @@ namespace Ids.Hosting
             IConfiguration config
         )
         {
-            if (config["Dataprotection:Type"] == "Docker")
+            if (config["Dataprotection:Type"] != "Dev")
             {
                 services.AddDataProtection()
                     .PersistKeysToFileSystem(

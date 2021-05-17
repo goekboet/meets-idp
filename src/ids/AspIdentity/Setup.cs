@@ -13,9 +13,6 @@ namespace Ids.AspIdentity
         )
         {
             services.AddDbContext<UsersDb>(options =>
-                // options.UseNpgsql(
-                //             configuration.GetConnectionString("Users"),
-                //             b => b.MigrationsAssembly("ids"))
                 options.UseSqlite(
                     configuration.GetConnectionString("Users"),
                     b => b.MigrationsAssembly("ids")
