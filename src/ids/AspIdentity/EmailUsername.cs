@@ -6,7 +6,6 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
-using Ids.AspIdentity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using static IdentityModel.OidcConstants;
