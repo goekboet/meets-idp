@@ -32,7 +32,12 @@ namespace seedData
             UserManager<ApplicationUser> record, 
             UserSeed u)
         {
-            var appUser = new ApplicationUser { UserName = u.Email, Id = Guid.NewGuid().ToString() };
+            var appUser = new ApplicationUser 
+            { 
+                UserName = u.Email, 
+                Id = Guid.NewGuid().ToString(),
+                Email = u.Email
+            };
             await record.CreateAsync(appUser, u.Password);
             var nameClaim = new Claim("name", u.Name);
             await record.AddClaimAsync(appUser, nameClaim);

@@ -1,0 +1,27 @@
+POST https://localhost:5001/connect/token
+CONTENT-TYPE: application/x-www-form-urlencoded
+
+client_id=dev
+&client_secret=dev
+&grant_type=password
+&username=Wallace.Newman@byappt.com
+&password=fxHfLU9D4UhM33jr
+
+###
+
+POST https://localhost:5001/connect/token
+CONTENT-TYPE: application/x-www-form-urlencoded
+
+client_id=dev
+&client_secret=dev
+&grant_type=client_credentials
+
+###
+
+POST https://localhost:5001/api/invite
+Authorization: Bearer xxx
+CONTENT-TYPE: application/json
+
+{
+    "email": "some@email.com" 
+}

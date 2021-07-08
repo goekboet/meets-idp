@@ -32,12 +32,7 @@ namespace Ids.Invite
             
                 if (sub is Ok<Guid> okSub)
                 {
-                    var r = new StatusJson
-                    {
-                        Invited = okSub.Value.ToString(),
-                    };
-
-                    return Ok(r); 
+                    return Ok(okSub.Value.ToString()); 
                 }
                 else if (sub is Error<Guid> errSub)
                 {
