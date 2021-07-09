@@ -25,9 +25,9 @@ namespace Ids.Invite
                 new Claim("picture", string.Empty )
             };
         
-        public async Task<Result<Guid>> Invite(string email)
+        public async Task<Result<Invitation>> Invite(Invitation invitee)
         {
-            var u = await _userManager.FindByEmailAsync(email);
+            var u = await _userManager.FindByNameAsync(invitee.Email);
 
             if (u == null)
             {
@@ -35,31 +35,39 @@ namespace Ids.Invite
                 var newUser = new IdsUser()
                 {
                     Id = newUserId.ToString(),
-                    UserName = email,
-                    Email = email
+                    UserName = invitee.Email,
+                    Email = invitee.Email
                 };
 
                 var createUserResult = await _userManager.CreateAsync(newUser);
                 if (createUserResult.Succeeded)
                 {
+                    invitee.UserId = newUserId;
                     var emptyProfile = await _userManager.AddClaimsAsync(newUser, EmptyProfile);
                     if (emptyProfile.Succeeded)
                     {
-                        return new Ok<Guid>(newUserId);
+                        invitee.EmailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                        return new Ok<Invitation>(invitee);
                     }
                     else
                     {
-                        return emptyProfile.ToAppError<Guid>();
+                        return emptyProfile.ToAppError<Invitation>();
                     }
                 }
                 else
                 {
-                    return createUserResult.ToAppError<Guid>();
+                    return createUserResult.ToAppError<Invitation>();
                 }
             }
             else
             {
-                return new Ok<Guid>(Guid.Parse(u.Id));
+                invitee.UserId = Guid.Parse(u.Id);
+                var hasPwd = await _userManager.HasPasswordAsync(u);
+                if (!hasPwd)
+                {
+                    invitee.EmailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(u);
+                }
+                return new Ok<Invitation>(invitee);
             }
         }
     }

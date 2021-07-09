@@ -4,21 +4,18 @@ using System.Threading.Tasks;
 
 namespace Ids.Invite
 {
-    public class InvitationJson
+    public class Invitation
     {
         [Required]
         [EmailAddress]
         [MaxLength(320)]
         public string Email { get; set; }
-    }
-
-    public class StatusJson
-    {
-        public string Invited { get; set; }
+        public Guid UserId {get;set;}
+        public string EmailConfirmationToken {get;set;}
     }
 
     public interface IInvitation
     {
-        Task<Result<Guid>> Invite(string email);
+        Task<Result<Invitation>> Invite(Invitation invitee);
     }
 }

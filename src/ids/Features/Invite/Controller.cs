@@ -24,17 +24,18 @@ namespace Ids.Invite
 
         [HttpPost]
         [Route("/api/invite")]
-        public async Task<IActionResult> Index(InvitationJson p)
+        public async Task<IActionResult> Index(
+            Invitation p)
         {
             if (ModelState.IsValid)
             {
-                var sub = await Invitation.Invite(p.Email);
+                var sub = await Invitation.Invite(p);
             
-                if (sub is Ok<Guid> okSub)
+                if (sub is Ok<Invitation> okSub)
                 {
-                    return Ok(okSub.Value.ToString()); 
+                    return Ok(p); 
                 }
-                else if (sub is Error<Guid> errSub)
+                else if (sub is Error<Invitation> errSub)
                 {
                     Logger.LogError(errSub.Description);
                     return StatusCode(500);
