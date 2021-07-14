@@ -30,9 +30,15 @@ namespace Ids.Register
         string v(string name) => $"~/Features/Register/Views/{name}.cshtml";
 
         [HttpGet, HttpHead]
-        public IActionResult Index(string returnUrl)
+        public IActionResult Index(string returnUrl, string userNameHint)
         {
-            return View(v("Index"), new RegistrationRequest());
+            return View(
+                v("Index"),
+                new RegistrationRequest()
+                {
+                    Email = userNameHint,
+                    ReturnUrl = returnUrl
+                });
         }
 
         string CodeFromResult(Result<string> r) => r is Ok<string> okR ? okR.Value : "";
@@ -49,11 +55,11 @@ namespace Ids.Register
                 if (registration is Ok<UnverifiedAccount> ok)
                 {
                     var c = await Code.Send(HttpContext.Response, ok.Value);
-                    
-                    return RedirectToAction("Verify", "Register", 
-                        new 
-                        { 
-                            userId = ok.Value.UserId, 
+
+                    return RedirectToAction("Verify", "Register",
+                        new
+                        {
+                            userId = ok.Value.UserId,
                             code = CodeFromResult(c),
                             returnUrl = r.ReturnUrl
                         });
@@ -83,10 +89,10 @@ namespace Ids.Register
             string returnUrl
         )
         {
-            return View(v("Verify"), 
-            new EmailVerificationCode() 
-            { 
-                UserId = userId, 
+            return View(v("Verify"),
+            new EmailVerificationCode()
+            {
+                UserId = userId,
                 Code = code,
                 ReturnUrl = returnUrl
             });

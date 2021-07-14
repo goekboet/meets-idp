@@ -24,7 +24,7 @@ namespace Ids.Invite
                 new Claim("name", string.Empty ),
                 new Claim("picture", string.Empty )
             };
-        
+
         public async Task<Result<Invitation>> Invite(Invitation invitee)
         {
             var u = await _userManager.FindByNameAsync(invitee.Email);
@@ -69,6 +69,25 @@ namespace Ids.Invite
                 }
                 return new Ok<Invitation>(invitee);
             }
+        }
+
+        public async Task<InvitationStatus> GetInvitationStatus(
+            string email)
+        {
+            var user = await _userManager.FindByNameAsync(email);
+            if (user == null)
+            {
+                return new InvitationStatus();
+            }
+
+            var hasPwd = await _userManager.HasPasswordAsync(user);
+
+            return new InvitationStatus
+            {
+                Registered = true,
+                HasPassword = hasPwd,
+                UserId = user.Id
+            };
         }
     }
 }

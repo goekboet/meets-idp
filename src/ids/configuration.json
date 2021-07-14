@@ -91,13 +91,13 @@
         "offline_access",
         "openid",
         "profile",
-        "bookings"
+        "email"
       ],
       "AllowOfflineAccess": true,
       "RefreshTokenExpiration": "Sliding",
       "RedirectUris": [
         "https://meets.ego/signin-oidc",
-        "http://localhost:5010/signin-oidc"
+        "https://localhost:6021/signin-oidc"
       ],
       "PostLogoutRedirectUris": [
         "https://meets.ego/signout-callback-oidc",
@@ -108,7 +108,7 @@
       "ClientId": "local-testclient",
       "ClientName": "Local testclient",
       "RequireConsent": false,
-      "RequireClientSecret" : false,
+      "RequireClientSecret": false,
       "RequirePkce": true,
       "AllowedGrantTypes": [
         "authorization_code"
