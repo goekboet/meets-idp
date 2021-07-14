@@ -18,8 +18,7 @@
       ],
       "AllowedScopes": [
         "openid",
-        "profile",
-        "bookings"
+        "profile"
       ],
       "RedirectUris": [
         "http://ego.dev"
