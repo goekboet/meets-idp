@@ -18,6 +18,7 @@ using Ids.Unregister;
 using Ids.ChangeUsername;
 using Ids.Invite;
 using Ids.Authorization;
+using Ids.NonLocal;
 
 namespace Ids
 {
@@ -42,6 +43,9 @@ namespace Ids
             services.ConfigureAspIdentity(Configuration);
             services.ConfigureIdentityServer4(Configuration);
             services.SetupAuthorization();
+
+            services.AddAuthentication()
+                .AddGithub(Configuration);
 
             services.AddControllersWithViews();
             services.SetupRegister();

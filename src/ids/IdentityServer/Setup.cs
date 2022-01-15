@@ -31,8 +31,6 @@ namespace Ids.Identityserver4
                         builder.UseSqlite(
                             config.GetConnectionString("Grants"),
                             b => b.MigrationsAssembly("ids"));
-
-
                     };
                     options.EnableTokenCleanup = true;
                 })

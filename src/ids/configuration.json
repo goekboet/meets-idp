@@ -45,6 +45,22 @@
       ]
     },
     {
+      "ClientId": "memo",
+      "ClientSecrets": [
+        { "Value": "kUI/B25weFBMmYEgi3j0UYTZCHeZuDhCubtWh7qB72Q=" }
+      ],
+      "AllowedGrantTypes": [
+        "authorization_code"
+      ],
+      "AllowedScopes": [
+        "openid",
+        "profile"
+      ],
+      "RedirectUris": [
+        "https://localhost:5091/signin-oidc"
+      ]
+    },
+    {
       "ClientId": "publish",
       "ClientName": "Byappt appointment publisher",
       "RequireConsent": false,
