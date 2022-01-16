@@ -11,7 +11,7 @@ namespace s2sha256
 
         public static string ComputeSHA256Hash(string text)
         {
-            using var sha256 = new SHA256Managed();
+            using var sha256 = SHA256.Create();
             var bs = Encoding.UTF8.GetBytes(text);
             var hash = sha256.ComputeHash(bs);
 
