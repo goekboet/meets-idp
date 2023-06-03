@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace ids.Migrations
 {
     [DbContext(typeof(UsersDb))]
@@ -13,247 +15,198 @@ namespace ids.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
 
             modelBuilder.Entity("Ids.AspIdentity.IdsUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("id");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("email");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("lockout_end");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("normalized_email");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("password_hash");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("phone_number");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("phone_number_confirmed");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("security_stamp");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_name");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("email_index");
+                        .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("user_name_index");
+                        .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("asp_net_users");
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("id");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("name");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT")
-                        .HasColumnName("normalized_name");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_roles");
+                    b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("role_name_index");
+                        .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("asp_net_roles");
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("role_id");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_role_claims");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("asp_net_role_claims");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("claim_type");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("claim_value");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("Id")
-                        .HasName("pk_asp_net_user_claims");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("asp_net_user_claims");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("provider_key");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_asp_net_user_logins");
+                    b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("asp_net_user_logins");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("role_id");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
+                    b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("asp_net_user_roles");
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("user_id");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("login_provider");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("name");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("value");
+                        .HasColumnType("TEXT");
 
-                    b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_asp_net_user_tokens");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("asp_net_user_tokens");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -261,7 +214,6 @@ namespace ids.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -271,7 +223,6 @@ namespace ids.Migrations
                     b.HasOne("Ids.AspIdentity.IdsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -281,7 +232,6 @@ namespace ids.Migrations
                     b.HasOne("Ids.AspIdentity.IdsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -291,14 +241,12 @@ namespace ids.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Ids.AspIdentity.IdsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -308,7 +256,6 @@ namespace ids.Migrations
                     b.HasOne("Ids.AspIdentity.IdsUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

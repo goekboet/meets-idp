@@ -1,36 +1,52 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+﻿using Ids.AspIdentity;
+using Ids.Authorization;
+using Ids.ChangeUsername;
+using Ids.Forgot;
+using Ids.Hosting;
+using Ids.Identityserver4;
+using Ids.Invite;
+using Ids.Login;
+using Ids.NonLocal;
+using Ids.Profile;
+using Ids.Register;
+using Ids.Unregister;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Ids
-{
-    public class Program
-    {
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+configuration.AddJsonFile("configuration.json", 
+    optional: true, 
+    reloadOnChange: true);
 
-        public static void Main(string[] args)
-        {
-            Console.Title = "meets.idgateway";
+var services = builder.Services;
+services.SetupProxying();          
+services.SetupDataProtection(configuration);
+services.ConfigureAspIdentity(configuration);
+services.ConfigureIdentityServer4(configuration);
+services.SetupAuthorization();
 
-            CreateHostBuilder(args).Build().Run();
-        }
+services.AddAuthentication()
+    .AddGithub(configuration);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, config) =>
-            {
-                config.AddJsonFile("configuration.json", 
-                    optional: true, 
-                    reloadOnChange: true);
-            })
-                .ConfigureWebHostDefaults(webBuilder =>
-        {
-            webBuilder
-                .UseStartup<Startup>();
-        });
-    }
-}
+services.AddControllersWithViews();
+services.SetupRegister();
+services.SetupUnregister();
+services.SetupForgot();
+services.SetupLogin();
+services.SetupProfile();
+services.SetupChangeUsername();
+services.SetupInvite();
+
+var app = builder.Build();
+
+app.UseForwardedHeaders();
+app.UseExceptionHandler("/error");
+app.UseStaticFiles();
+app.UseRouting();
+app.UseIdentityServer();
+app.UseAuthorization();
+app.MapDefaultControllerRoute();
+
+app.Run();

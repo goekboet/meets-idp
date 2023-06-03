@@ -3,20 +3,19 @@ using System;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+#nullable disable
 
 namespace ids.Migrations.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20210516144042_Initial")]
-    partial class Initial
+    partial class PersistedGrantDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
@@ -65,7 +64,7 @@ namespace ids.Migrations.PersistedGrantDb
 
                     b.HasIndex("Expiration");
 
-                    b.ToTable("DeviceCodes");
+                    b.ToTable("DeviceCodes", (string)null);
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
@@ -101,14 +100,14 @@ namespace ids.Migrations.PersistedGrantDb
 
                     b.HasIndex("Use");
 
-                    b.ToTable("Keys");
+                    b.ToTable("Keys", (string)null);
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
                 {
-                    b.Property<string>("Key")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
@@ -133,6 +132,10 @@ namespace ids.Migrations.PersistedGrantDb
                     b.Property<DateTime?>("Expiration")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Key")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SessionId")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
@@ -146,17 +149,78 @@ namespace ids.Migrations.PersistedGrantDb
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Key");
+                    b.HasKey("Id");
 
                     b.HasIndex("ConsumedTime");
 
                     b.HasIndex("Expiration");
 
+                    b.HasIndex("Key")
+                        .IsUnique();
+
                     b.HasIndex("SubjectId", "ClientId", "Type");
 
                     b.HasIndex("SubjectId", "SessionId", "Type");
 
-                    b.ToTable("PersistedGrants");
+                    b.ToTable("PersistedGrants", (string)null);
+                });
+
+            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ServerSideSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Expires")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Renewed")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Scheme")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("Expires");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("ServerSideSessions", (string)null);
                 });
 #pragma warning restore 612, 618
         }
